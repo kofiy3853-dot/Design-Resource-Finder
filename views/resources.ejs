@@ -1,91 +1,255 @@
-<%- include('partials/header') %>
-<main class="pt-24 pb-xl">
-  <div class="max-w-container-max mx-auto px-md">
-    <div class="flex items-center gap-sm mb-lg">
-      <a href="/dashboard" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-xs font-body-md">
-        <span class="material-symbols-outlined">arrow_back</span> Back to Dashboard
-      </a>
-      <h1 class="font-headline-lg text-headline-lg mb-sm">Design Resources</h1>
-      <p class="font-body-md text-body-md text-on-surface-variant">Curated resources for your design projects</p>
-    </div>
+<%- include('partials/header-app') %>
+<div class="dash-page">
+  <div class="dash-sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- Category Tabs -->
-    <div class="flex gap-sm overflow-x-auto pb-md mb-lg" style="scrollbar-width: none;">
-      <% const cats = ['All', 'Fonts', 'Colors', 'Icons', 'Illustrations', 'Stock Photos', 'UI Kits', 'Patterns', 'Tools']; %>
-      <% cats.forEach((cat, i) => { %>
-        <button class="pill <%= i===0?'active':'' %>" data-cat="<%= cat.toLowerCase() %>"><%= cat %></button>
-      <% }) %>
-    </div>
-
-    <!-- Resources Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg" id="resourcesGrid">
-      <% const resources = [
-        { title: 'Google Fonts', cat: 'fonts', desc: 'Free, open-source fonts for web and print', link: 'https://fonts.google.com' },
-        { title: 'Font Squirrel', cat: 'fonts', desc: 'Hand-picked free fonts for commercial use', link: 'https://fontsquirrel.com' },
-        { title: 'Adobe Fonts', cat: 'fonts', desc: 'Premium fonts with Creative Cloud', link: 'https://fonts.adobe.com' },
-        { title: 'Coolors', cat: 'colors', desc: 'Super fast color palette generator', link: 'https://coolors.co' },
-        { title: 'Color Hunt', cat: 'colors', desc: 'Curated color palettes for inspiration', link: 'https://colorhunt.co' },
-        { title: 'UI Gradients', cat: 'colors', desc: 'Beautiful gradient combinations', link: 'https://uigradients.com' },
-        { title: 'Lucide Icons', cat: 'icons', desc: 'Beautiful, consistent icon set', link: 'https://lucide.dev' },
-        { title: 'Material Symbols', cat: 'icons', desc: "Google's official icon font", link: 'https://fonts.google.com/icons' },
-        { title: 'Heroicons', cat: 'icons', desc: 'Hand-crafted SVG icons by Tailwind', link: 'https://heroicons.com' },
-        { title: 'unDraw', cat: 'illustrations', desc: 'Open-source illustrations for any project', link: 'https://undraw.co' },
-        { title: 'Humaaans', cat: 'illustrations', desc: 'Mix-&-match illustration library', link: 'https://humaaans.com' },
-        { title: 'DrawKit', cat: 'illustrations', desc: 'Beautiful free illustrations', link: 'https://drawkit.io' },
-        { title: 'Unsplash', cat: 'stock photos', desc: 'Free high-resolution photos', link: 'https://unsplash.com' },
-        { title: 'Pexels', cat: 'stock photos', desc: 'Free stock photos & videos', link: 'https://pexels.com' },
-        { title: 'Tailwind UI', cat: 'ui kits', desc: 'Official Tailwind CSS components', link: 'https://tailwindui.com' },
-        { title: 'shadcn/ui', cat: 'ui kits', desc: 'Beautiful accessible components', link: 'https://ui.shadcn.com' },
-        { title: 'Hero Patterns', cat: 'patterns', desc: 'Repeatable SVG background patterns', link: 'https://heropatterns.com' },
-        { title: 'SVG Backgrounds', cat: 'patterns', desc: 'Customizable SVG backgrounds', link: 'https://svgbackgrounds.com' },
-        { title: 'Figma Community', cat: 'tools', desc: 'Design files, plugins, widgets', link: 'https://figma.com/community' },
-        { title: 'Penpot', cat: 'tools', desc: 'Open-source design & prototyping', link: 'https://penpot.app' },
-      ]; %>
-      <% resources.forEach(r => { %>
-        <div class="resource-card glass-card rounded-2xl p-lg" data-cat="<%= r.cat %>">
-          <div class="flex items-start gap-md">
-            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-primary"><%= 
-                r.cat==='fonts'?'font_download':
-                r.cat==='colors'?'palette':
-                r.cat==='icons'?'widgets':
-                r.cat==='illustrations'?'brush':
-                r.cat==='stock photos'?'photo_library':
-                r.cat==='ui kits'?'dashboard':
-                r.cat==='patterns'?'texture':
-                'build_circle' %></span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-headline-sm text-headline-sm truncate"><%= r.title %></h3>
-              <p class="font-body-md text-body-md text-on-surface-variant mt-xs"><%= r.desc %></p>
-            </div>
-          </div>
-          <a href="<%= r.link %>" target="_blank" class="mt-md inline-flex items-center gap-xs text-primary font-body-md hover:underline">
-            Visit <span class="material-symbols-outlined text-[16px]">open_in_new</span>
-          </a>
+  <div class="dash-layout">
+    <aside class="dash-sidebar" id="sidebar">
+      <div class="dash-sidebar-header">
+        <div class="dash-sidebar-logo"><span class="material-symbols-outlined">auto_awesome</span></div>
+        <div class="dash-sidebar-brand">
+          <h3>Design Resource Finder</h3>
+          <p>Dashboard</p>
         </div>
-      <% }) %>
-    </div>
-  </div>
-</main>
+      </div>
+      <nav class="dash-sidebar-nav">
+        <ul>
+          <li class="dash-nav-label">Main</li>
+          <li><a class="dash-nav-item" href="/dashboard"><span class="material-symbols-outlined">dashboard</span> Dashboard</a></li>
+          <li><a class="dash-nav-item" href="/upload"><span class="material-symbols-outlined">upload_file</span> Upload Design</a></li>
+          <li><a class="dash-nav-item" href="/history"><span class="material-symbols-outlined">history</span> History</a></li>
+          <li><a class="dash-nav-item" href="/projects"><span class="material-symbols-outlined">folder</span> Projects</a></li>
+          <li><a class="dash-nav-item" href="/favorites"><span class="material-symbols-outlined">favorite</span> Favorites</a></li>
+          <li><a class="dash-nav-item" href="/bg-generator"><span class="material-symbols-outlined">auto_fix_high</span> AI Background Generator</a></li>
+          <li class="dash-nav-label">Resources</li>
+          <li><a class="dash-nav-item active" href="/resources"><span class="material-symbols-outlined">grid_view</span> Resources</a></li>
+          <li><a class="dash-nav-item" href="/pricing"><span class="material-symbols-outlined">sell</span> Pricing</a></li>
+          <li><a class="dash-nav-item" href="/settings"><span class="material-symbols-outlined">settings</span> Settings</a></li>
+          <li><a class="dash-nav-item" href="/help"><span class="material-symbols-outlined">help</span> Help & Support</a></li>
+        </ul>
+      </nav>
+      <div class="dash-sidebar-footer">
+        <div class="dash-upgrade-card">
+          <h4>Upgrade to Pro</h4>
+          <p>Unlock unlimited analyses</p>
+          <a href="/pricing" class="dash-upgrade-btn dash-ripple">Upgrade Now</a>
+        </div>
+        <div class="dash-user-card">
+          <div class="dash-avatar"><%= user?.name ? user.name.charAt(0).toUpperCase() : 'U' %></div>
+          <div class="dash-user-info">
+            <h4><%= user?.name || 'User' %></h4>
+            <p><%= user?.email || 'user@example.com' %></p>
+          </div>
+          <span class="material-symbols-outlined dash-user-toggle" id="userMenuToggle">expand_more</span>
+          <div class="dash-user-dropdown" id="userDropdown">
+            <a href="/profile">Profile</a>
+            <a href="/settings">Settings</a>
+            <a href="/achievements">Achievements</a>
+            <a href="/auth/logout" class="dash-logout">Sign Out</a>
+          </div>
+        </div>
+      </div>
+    </aside>
 
+    <main class="dash-main">
+      <div class="dash-content">
+        <div class="dash-page-header">
+          <a href="/dashboard" class="flex items-center gap-xs font-body-md"><span class="material-symbols-outlined">arrow_back</span> Back to Dashboard</a>
+          <h1>Design Resources</h1>
+          <p>Curated resources for your design projects</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div style="margin-bottom:20px">
+          <div style="position:relative;max-width:400px">
+            <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--text-muted)">search</span>
+            <input type="text" id="searchInput" placeholder="Search resources..." style="width:100%;padding:10px 14px 10px 42px;border-radius:var(--radius-sm);border:1px solid var(--nav-border);background:var(--card-bg);font-size:14px;color:var(--on-surface);outline:none;font-family:inherit" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--nav-border)'"/>
+          </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-pills" id="categoryPills" style="margin-bottom:24px">
+          <button class="pill active" data-cat="all">All</button>
+          <button class="pill" data-cat="fonts">Fonts</button>
+          <button class="pill" data-cat="colors">Colors</button>
+          <button class="pill" data-cat="icons">Icons</button>
+          <button class="pill" data-cat="illustrations">Illustrations</button>
+          <button class="pill" data-cat="stock photos">Stock Photos</button>
+          <button class="pill" data-cat="ui kits">UI Kits</button>
+          <button class="pill" data-cat="patterns">Patterns</button>
+          <button class="pill" data-cat="tools">Tools</button>
+        </div>
+
+        <!-- Results Count -->
+        <div style="margin-bottom:16px;font-size:13px;color:var(--text-muted)">
+          <span id="resultsCount">20</span> resources found
+        </div>
+
+        <!-- Resources Grid -->
+        <div class="history-grid" id="resourcesGrid">
+          <% const resources = [
+            { title: 'Google Fonts', cat: 'fonts', desc: 'Free, open-source fonts for web and print', link: 'https://fonts.google.com', icon: 'font_download' },
+            { title: 'Font Squirrel', cat: 'fonts', desc: 'Hand-picked free fonts for commercial use', link: 'https://fontsquirrel.com', icon: 'font_download' },
+            { title: 'Adobe Fonts', cat: 'fonts', desc: 'Premium fonts with Creative Cloud', link: 'https://fonts.adobe.com', icon: 'font_download' },
+            { title: 'Coolors', cat: 'colors', desc: 'Super fast color palette generator', link: 'https://coolors.co', icon: 'palette' },
+            { title: 'Color Hunt', cat: 'colors', desc: 'Curated color palettes for inspiration', link: 'https://colorhunt.co', icon: 'palette' },
+            { title: 'UI Gradients', cat: 'colors', desc: 'Beautiful gradient combinations', link: 'https://uigradients.com', icon: 'palette' },
+            { title: 'Lucide Icons', cat: 'icons', desc: 'Beautiful, consistent icon set', link: 'https://lucide.dev', icon: 'widgets' },
+            { title: 'Material Symbols', cat: 'icons', desc: "Google's official icon font", link: 'https://fonts.google.com/icons', icon: 'widgets' },
+            { title: 'Heroicons', cat: 'icons', desc: 'Hand-crafted SVG icons by Tailwind', link: 'https://heroicons.com', icon: 'widgets' },
+            { title: 'unDraw', cat: 'illustrations', desc: 'Open-source illustrations for any project', link: 'https://undraw.co', icon: 'brush' },
+            { title: 'Humaaans', cat: 'illustrations', desc: 'Mix-&-match illustration library', link: 'https://humaaans.com', icon: 'brush' },
+            { title: 'DrawKit', cat: 'illustrations', desc: 'Beautiful free illustrations', link: 'https://drawkit.io', icon: 'brush' },
+            { title: 'Unsplash', cat: 'stock photos', desc: 'Free high-resolution photos', link: 'https://unsplash.com', icon: 'photo_library' },
+            { title: 'Pexels', cat: 'stock photos', desc: 'Free stock photos & videos', link: 'https://pexels.com', icon: 'photo_library' },
+            { title: 'Tailwind UI', cat: 'ui kits', desc: 'Official Tailwind CSS components', link: 'https://tailwindui.com', icon: 'dashboard' },
+            { title: 'shadcn/ui', cat: 'ui kits', desc: 'Beautiful accessible components', link: 'https://ui.shadcn.com', icon: 'dashboard' },
+            { title: 'Hero Patterns', cat: 'patterns', desc: 'Repeatable SVG background patterns', link: 'https://heropatterns.com', icon: 'texture' },
+            { title: 'SVG Backgrounds', cat: 'patterns', desc: 'Customizable SVG backgrounds', link: 'https://svgbackgrounds.com', icon: 'texture' },
+            { title: 'Figma Community', cat: 'tools', desc: 'Design files, plugins, widgets', link: 'https://figma.com/community', icon: 'build_circle' },
+            { title: 'Penpot', cat: 'tools', desc: 'Open-source design & prototyping', link: 'https://penpot.app', icon: 'build_circle' },
+          ]; %>
+          <% resources.forEach(function(r) { %>
+            <div class="resource-card" data-cat="<%= r.cat %>" data-title="<%= r.title.toLowerCase() %>" data-desc="<%= r.desc.toLowerCase() %>">
+              <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px">
+                <div style="width:48px;height:48px;border-radius:12px;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                  <span class="material-symbols-outlined" style="color:var(--primary)"><%= r.icon %></span>
+                </div>
+                <div style="flex:1;min-width:0">
+                  <h3 style="font-size:15px;font-weight:600;color:var(--on-surface);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><%= r.title %></h3>
+                  <p style="font-size:13px;color:var(--text-secondary);margin-top:4px"><%= r.desc %></p>
+                </div>
+              </div>
+              <a href="<%= r.link %>" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:4px;color:var(--primary);font-size:13px;font-weight:500;text-decoration:none;transition:opacity 0.2s" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                Visit <span class="material-symbols-outlined" style="font-size:16px">open_in_new</span>
+              </a>
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" style="display:none;text-align:center;padding:80px 20px">
+          <span class="material-symbols-outlined" style="font-size:56px;color:var(--text-muted);opacity:0.3;margin-bottom:16px;display:block">search_off</span>
+          <h3 style="font-size:18px;font-weight:600;color:var(--on-surface);margin-bottom:8px">No resources found</h3>
+          <p style="font-size:14px;color:var(--text-secondary)">Try adjusting your search or filter to find what you're looking for.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="dash-toast-container" id="toastContainer"></div>
+</div>
+
+<style>
+  .resource-card {
+    background: var(--card-bg);
+    border: 1px solid var(--nav-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    transition: all 0.2s;
+  }
+  .resource-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-fixed-dim);
+  }
+  .category-pills {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0;
+    scrollbar-width: none;
+  }
+  .category-pills::-webkit-scrollbar { display: none; }
+  .pill {
+    white-space: nowrap;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid var(--nav-border);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    flex-shrink: 0;
+    font-family: inherit;
+  }
+  .pill:hover { border-color: var(--primary); color: var(--primary); }
+  .pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+</style>
+
+<script src="/js/dashboard-v2.js"></script>
 <script>
 (function() {
   'use strict';
-  
+
   const pills = document.querySelectorAll('.pill');
   const cards = document.querySelectorAll('.resource-card');
-  
+  const searchInput = document.getElementById('searchInput');
+  const resultsCount = document.getElementById('resultsCount');
+  const emptyState = document.getElementById('emptyState');
+  const resourcesGrid = document.getElementById('resourcesGrid');
+
+  let activeCategory = 'all';
+  let searchTerm = '';
+
+  function filterResources() {
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const cat = card.getAttribute('data-cat');
+      const title = card.getAttribute('data-title');
+      const desc = card.getAttribute('data-desc');
+
+      const matchesCategory = activeCategory === 'all' || cat === activeCategory;
+      const matchesSearch = !searchTerm ||
+        title.includes(searchTerm) ||
+        desc.includes(searchTerm) ||
+        cat.includes(searchTerm);
+
+      if (matchesCategory && matchesSearch) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    resultsCount.textContent = visibleCount;
+    emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+    resourcesGrid.style.display = visibleCount === 0 ? 'none' : '';
+  }
+
+  // Category filter
   pills.forEach(pill => {
     pill.addEventListener('click', () => {
       pills.forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
-      
-      const filter = pill.getAttribute('data-cat');
-      cards.forEach(card => {
-        const cat = card.getAttribute('data-cat');
-        card.style.display = (filter === 'all' || cat === filter) ? '' : 'none';
-      });
+      activeCategory = pill.getAttribute('data-cat');
+      filterResources();
+    });
+  });
+
+  // Search filter
+  searchInput.addEventListener('input', (e) => {
+    searchTerm = e.target.value.toLowerCase().trim();
+    filterResources();
+  });
+
+  // Keyboard navigation for category pills
+  pills.forEach((pill, index) => {
+    pill.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = pills[index + 1] || pills[0];
+        next.click();
+        next.focus();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = pills[index - 1] || pills[pills.length - 1];
+        prev.click();
+        prev.focus();
+      }
     });
   });
 })();
