@@ -143,6 +143,14 @@ class JobQueue extends EventEmitter {
     const [rows] = await pool.query('SELECT * FROM job_queue WHERE id = ?', [jobId]);
     return rows[0] || null;
   }
+
+  async getJobByAnalysisId(analysisId) {
+    const [rows] = await pool.query(
+      "SELECT * FROM job_queue WHERE JSON_EXTRACT(payload, '$.analysisId') = ? ORDER BY created_at DESC LIMIT 1",
+      [analysisId]
+    );
+    return rows[0] || null;
+  }
 }
 
 module.exports = new JobQueue();

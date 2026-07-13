@@ -85,9 +85,23 @@ app.use('/admin', require('./routes/admin'));
 app.get('/api/analysis/:id/progress', async (req, res) => {
   try {
     const jobQueue = require('./utils/jobQueue');
-    const job = await jobQueue.getJob(req.params.id);
+    const Analysis = require('./models/Analysis');
+
+    // First check if analysis is already completed
+    const analysis = await Analysis.findById(req.params.id);
+    if (analysis && analysis.status === 'completed') {
+      return res.json({
+        id: req.params.id,
+        status: 'completed',
+        progress: 100,
+        currentStep: 'completed',
+      });
+    }
+
+    // Find job by analysis ID
+    const job = await jobQueue.getJobByAnalysisId(req.params.id);
     if (!job) return res.status(404).json({ error: 'Job not found' });
-    
+
     res.json({
       id: job.id,
       status: job.status,
@@ -104,9 +118,9 @@ app.get('/api/analysis/:id/progress', async (req, res) => {
   }
 });
 
-jobQueue.register('process_analysis', async (job) => {
+jobQueue.register('process_analysis', async (job, reportProgress) => {
   const payload = typeof job.payload === 'string' ? JSON.parse(job.payload) : job.payload;
-  await analysisCtrl.processAnalysis(payload.analysisId);
+  await analysisCtrl.processAnalysis(payload.analysisId, reportProgress);
 });
 
 jobQueue.startPolling(1000);

@@ -5,7 +5,7 @@ const colorAnalyzer = require('../utils/colorAnalyzer');
 const aiService = require('../utils/aiService');
 const path = require('path');
 
-exports.processAnalysis = async (analysisId) => {
+exports.processAnalysis = async (analysisId, reportProgress = null) => {
   try {
     console.log(`[Analysis] Processing analysis ${analysisId}`);
 
@@ -35,11 +35,17 @@ exports.processAnalysis = async (analysisId) => {
     }
     console.log(`[Analysis] File exists, size: ${fs.statSync(filePath).size} bytes`);
 
+    // Report progress: starting color analysis
+    if (reportProgress) reportProgress(20, 'color_analysis');
+
     // Run color + AI in parallel
     console.log(`[Analysis] Starting color and AI analysis...`);
     const [colorResult, aiResult] = await Promise.allSettled([
       colorAnalyzer.extractColors(filePath),
-      aiService.analyzeDesign(filePath),
+      aiService.analyzeDesign(filePath).then(result => {
+        if (reportProgress) reportProgress(70, 'ai_analysis');
+        return result;
+      }),
     ]);
 
     const colors = colorResult.status === 'fulfilled' ? colorResult.value : { colors: [], palette: {} };
@@ -69,6 +75,9 @@ exports.processAnalysis = async (analysisId) => {
         palette: colors?.palette || {},
       },
     };
+
+    // Report progress: saving results
+    if (reportProgress) reportProgress(85, 'saving_results');
 
     // Only add AI fields if we got results
     if (ai) {
