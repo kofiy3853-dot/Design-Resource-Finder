@@ -1,0 +1,329 @@
+<%- include('partials/header') %>
+<main>
+<style>
+.ai-hero { position:relative; overflow:hidden; min-height:85vh; display:flex; align-items:center; background:var(--surface-container-low) url('/images/hero-bg.jpg') center/cover no-repeat; }
+.ai-hero::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(5,5,10,0.85),rgba(124,58,237,0.15),rgba(5,5,10,0.85)); }
+.orb { position:absolute; width:400px; height:400px; border-radius:50%; filter:blur(100px); opacity:0.3; pointer-events:none; }
+.orb-1 { top:-100px; right:-100px; background:var(--primary); animation: orbFloat 8s ease-in-out infinite; }
+.orb-2 { bottom:-150px; left:-100px; background:#8B5CF6; animation: orbFloat 12s ease-in-out infinite reverse; }
+@keyframes orbFloat { 0%,100%{transform:translateY(0)scale(1)} 50%{transform:translateY(-30px)scale(1.1)} }
+.process-line { position:relative; }
+.process-line::after { content:''; position:absolute; top:40px; left:50%; width:2px; height:calc(100% - 40px); background:linear-gradient(to bottom,var(--primary),transparent); transform:translateX(-50%); }
+.process-line:last-child::after { display:none; }
+.capability-card { transition:all 0.4s cubic-bezier(0.4,0,0.2,1); }
+.capability-card:hover { transform:translateY(-6px); border-color:var(--primary-fixed-dim); }
+.benefit-icon { width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px; }
+</style>
+
+<section class="ai-hero">
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="relative z-10 max-w-container-max mx-auto px-md w-full">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-xl items-center py-xl">
+<div class="reveal">
+<div class="inline-flex items-center gap-1 px-sm py-1 rounded-full mb-md" style="background:var(--primary-alpha-10);color:var(--primary);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em;">
+<span class="material-symbols-outlined" style="font-size:16px">neurology</span>
+<span>Powered by Computer Vision</span>
+</div>
+<h1 class="font-display-xl text-display-xl md:text-[52px] leading-[1.05] font-bold mb-sm">
+AI-Powered<br/>
+<span class="hero-gradient-text">Design Analysis</span>
+</h1>
+<p class="font-body-lg text-body-lg md:text-[16px] text-on-surface-variant max-w-[520px] leading-relaxed mb-lg">
+Upload any design and our AI instantly deconstructs every visual element — identifying fonts, colors, layouts, styles, and the creative decisions behind them.
+</p>
+<div class="flex flex-wrap gap-sm mb-lg">
+<a href="<%= user ? '/upload' : '/auth/register' %>" class="cta-glow inline-flex items-center gap-1 font-bold px-lg py-sm rounded-xl" style="background:var(--primary);color:var(--on-primary);">
+<span>Start Analyzing</span>
+<span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>
+</a>
+<a href="#how-it-works" class="inline-flex items-center gap-1 font-bold px-lg py-sm rounded-xl" style="background:var(--surface-container-high);color:var(--on-surface);border:1px solid var(--card-border);">
+<span class="material-symbols-outlined" style="font-size:18px">play_arrow</span>
+<span>See How It Works</span>
+</a>
+</div>
+<div class="flex flex-wrap gap-md">
+<div class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px;color:var(--success);">check_circle</span><span class="font-body-md text-body-md text-on-surface font-bold">99.8%</span><span class="font-label-sm text-label-sm text-on-surface-variant">Accuracy</span></div>
+<div class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px;color:var(--success);">check_circle</span><span class="font-body-md text-body-md text-on-surface font-bold">&lt;2s</span><span class="font-label-sm text-label-sm text-on-surface-variant">Analysis</span></div>
+<div class="flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px;color:var(--success);">check_circle</span><span class="font-body-md text-body-md text-on-surface font-bold">100+</span><span class="font-label-sm text-label-sm text-on-surface-variant">Fonts</span></div>
+</div>
+</div>
+<div class="hidden lg:block reveal" style="transition-delay:0.2s">
+<div class="glass-card rounded-2xl overflow-hidden" style="transform:perspective(1000px) rotateY(-2deg);border-color:var(--primary-fixed-dim);">
+<div class="flex items-center gap-2 px-md py-sm" style="border-bottom:1px solid var(--card-border);">
+<div class="flex gap-1"><span class="w-3 h-3 rounded-full" style="background:#EF4444"></span><span class="w-3 h-3 rounded-full" style="background:#F59E0B"></span><span class="w-3 h-3 rounded-full" style="background:#10B981"></span></div>
+<span class="font-body-md text-body-md text-on-surface font-bold ml-1">AI Analysis Engine</span>
+</div>
+<div class="p-md">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Scanning design asset...</span>
+</div>
+<div class="space-y-sm">
+<div class="flex items-center gap-sm p-sm rounded-lg" style="background:var(--surface-container-low);"><span class="material-symbols-outlined text-[18px]" style="color:var(--success);">check</span><span class="font-body-md text-body-md text-on-surface">Font Detection: Inter, Playfair Display</span></div>
+<div class="flex items-center gap-sm p-sm rounded-lg" style="background:var(--surface-container-low);"><span class="material-symbols-outlined text-[18px]" style="color:var(--success);">check</span><span class="font-body-md text-body-md text-on-surface">Color Palette: 6 colors extracted</span></div>
+<div class="flex items-center gap-sm p-sm rounded-lg" style="background:var(--surface-container-low);"><span class="material-symbols-outlined text-[18px]" style="color:var(--success);">check</span><span class="font-body-md text-body-md text-on-surface">Layout: 12-column grid detected</span></div>
+<div class="flex items-center gap-sm p-sm rounded-lg" style="background:var(--surface-container-low);"><span class="material-symbols-outlined text-[18px]" style="color:var(--success);">check</span><span class="font-body-md text-body-md text-on-surface">Style: Modern Minimalist</span></div>
+<div class="flex items-center gap-sm p-sm rounded-lg" style="background:var(--surface-container-low);"><span class="material-symbols-outlined text-[18px]" style="color:var(--success);">check</span><span class="font-body-md text-body-md text-on-surface">Accessibility: WCAG AA (92/100)</span></div>
+<div class="flex items-center gap-sm p-sm rounded-lg" style="background:var(--surface-container-low);"><span class="material-symbols-outlined text-[18px]" style="color:var(--success);">check</span><span class="font-body-md text-body-md text-on-surface">AI Insights: Educational breakdown</span></div>
+</div>
+<div class="mt-md pt-md text-center" style="border-top:1px solid var(--card-border);">
+<span class="font-label-sm text-label-sm" style="color:var(--primary);font-weight:700;">Complete in 1.8s &middot; Confidence 96%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-xl px-md">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-xl max-w-[600px] mx-auto reveal">
+<h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">What Our AI Analyzes</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Every visual element is systematically identified, classified, and explained.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
+<div class="capability-card glass-card p-lg rounded-xl reveal">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">text_fields</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Font Identification</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-sm">Detect font families, weights, sizes, line heights, and letter spacing with 99.8% precision across any image or PDF.</p>
+<div class="flex flex-wrap gap-1"><span class="px-sm py-0.5 rounded-full font-label-sm text-label-sm" style="background:var(--primary-alpha-10);color:var(--primary);">Inter</span><span class="px-sm py-0.5 rounded-full font-label-sm text-label-sm" style="background:var(--primary-alpha-10);color:var(--primary);">Playfair</span><span class="px-sm py-0.5 rounded-full font-label-sm text-label-sm" style="background:var(--primary-alpha-10);color:var(--primary);">Roboto</span></div>
+</div>
+<div class="capability-card glass-card p-lg rounded-xl reveal" style="transition-delay:0.05s">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">palette</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Color Extraction</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-sm">Instantly extract every color with HEX, RGB, and HSL values. Identify primary, secondary, accent, and background colors.</p>
+<div class="flex gap-1"><span class="w-6 h-6 rounded" style="background:#7C3AED"></span><span class="w-6 h-6 rounded" style="background:#8B5CF6"></span><span class="w-6 h-6 rounded" style="background:#1E1B2E"></span><span class="w-6 h-6 rounded" style="background:#F5F3FF"></span><span class="w-6 h-6 rounded" style="background:#10B981"></span></div>
+</div>
+<div class="capability-card glass-card p-lg rounded-xl reveal" style="transition-delay:0.1s">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">grid_view</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Layout Analysis</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Reveal grid systems, alignment patterns, white space distribution, margins, padding, and visual hierarchy structures.</p>
+</div>
+<div class="capability-card glass-card p-lg rounded-xl reveal" style="transition-delay:0.15s">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">style</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Style Detection</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Recognize design styles including Minimalist, Luxury, Corporate, Modern, Vintage, Brutalist, Glassmorphism, and more.</p>
+</div>
+<div class="capability-card glass-card p-lg rounded-xl reveal" style="transition-delay:0.2s">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">image</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Object Detection</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Identify products, people, icons, logos, illustrations, backgrounds, and decorative elements within the design.</p>
+</div>
+<div class="capability-card glass-card p-lg rounded-xl reveal" style="transition-delay:0.25s">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">shield</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Accessibility Scoring</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Evaluate contrast ratios, readability scores, and WCAG compliance levels to ensure your designs are inclusive.</p>
+</div>
+<div class="capability-card glass-card p-lg rounded-xl reveal" style="transition-delay:0.3s">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">category</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Shape Recognition</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Detect circles, rectangles, polygons, blobs, borders, dividers, and other geometric elements in the composition.</p>
+</div>
+<div class="capability-card glass-card p-lg rounded-xl reveal" style="transition-delay:0.35s">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">school</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">AI Design Mentor</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Get educational insights explaining why design choices work and how you can apply similar techniques to your projects.</p>
+</div>
+<div class="capability-card glass-card p-lg rounded-xl reveal" style="transition-delay:0.4s">
+<div class="benefit-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+<span class="material-symbols-outlined">auto_fix</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Prompt Generation</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Generate ready-to-use prompts for DALL-E, Midjourney, Adobe Firefly, and Stable Diffusion to recreate similar designs.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="how-it-works" class="py-xl px-md" style="background:var(--surface-container-low);">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-xl max-w-[600px] mx-auto reveal">
+<h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">How AI Design Analysis Works</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Six stages of deep visual intelligence that transform any design into actionable insights.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg max-w-[1000px] mx-auto">
+<div class="process-line glass-card p-lg rounded-xl text-center reveal">
+<div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-md" style="background:var(--primary-alpha-10);">
+<span class="material-symbols-outlined text-primary" style="font-size:30px;">upload_file</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mb-xs block">Stage 1</span>
+<h4 class="font-headline-lg text-headline-lg font-bold mb-xs">Upload</h4>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Drag and drop any image, screenshot, or PDF into the analysis engine.</p>
+</div>
+<div class="process-line glass-card p-lg rounded-xl text-center reveal" style="transition-delay:0.1s">
+<div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-md" style="background:var(--primary-alpha-10);">
+<span class="material-symbols-outlined text-primary" style="font-size:30px;">visibility</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mb-xs block">Stage 2</span>
+<h4 class="font-headline-lg text-headline-lg font-bold mb-xs">Pre-process</h4>
+<p class="font-body-lg text-body-lg text-on-surface-variant">The AI normalizes the image, detects resolution, and prepares for analysis.</p>
+</div>
+<div class="process-line glass-card p-lg rounded-xl text-center reveal" style="transition-delay:0.2s">
+<div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-md" style="background:var(--primary-alpha-10);">
+<span class="material-symbols-outlined text-primary" style="font-size:30px;">neurology</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mb-xs block">Stage 3</span>
+<h4 class="font-headline-lg text-headline-lg font-bold mb-xs">Neural Scan</h4>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Computer vision models scan every pixel region for text, objects, and patterns.</p>
+</div>
+<div class="process-line glass-card p-lg rounded-xl text-center reveal" style="transition-delay:0.3s">
+<div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-md" style="background:var(--primary-alpha-10);">
+<span class="material-symbols-outlined text-primary" style="font-size:30px;">analytics</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mb-xs block">Stage 4</span>
+<h4 class="font-headline-lg text-headline-lg font-bold mb-xs">Extract</h4>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Fonts, colors, grid structures, and visual elements are identified and cataloged.</p>
+</div>
+<div class="process-line glass-card p-lg rounded-xl text-center reveal" style="transition-delay:0.4s">
+<div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-md" style="background:var(--primary-alpha-10);">
+<span class="material-symbols-outlined text-primary" style="font-size:30px;">psychology</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mb-xs block">Stage 5</span>
+<h4 class="font-headline-lg text-headline-lg font-bold mb-xs">Analyze</h4>
+<p class="font-body-lg text-body-lg text-on-surface-variant">AI synthesizes findings, evaluates accessibility, and generates educational insights.</p>
+</div>
+<div class="process-line glass-card p-lg rounded-xl text-center reveal" style="transition-delay:0.5s">
+<div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-md" style="background:var(--primary-alpha-10);">
+<span class="material-symbols-outlined text-primary" style="font-size:30px;">description</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold mb-xs block">Stage 6</span>
+<h4 class="font-headline-lg text-headline-lg font-bold mb-xs">Report</h4>
+<p class="font-body-lg text-body-lg text-on-surface-variant">A comprehensive report is generated with fonts, colors, guides, and recommendations.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-xl px-md">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-xl max-w-[600px] mx-auto reveal">
+<h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">The Technology Behind It</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Our AI stack combines computer vision, machine learning, and design theory.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg max-w-[900px] mx-auto">
+<div class="glass-card p-lg rounded-xl reveal">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:var(--primary-alpha-10);"><span class="material-symbols-outlined text-primary">computer</span></div>
+<h3 class="font-headline-lg text-headline-lg font-bold">Computer Vision</h3>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">Pre-trained convolutional neural networks analyze pixel-level data to detect text regions, color distributions, object boundaries, and spatial relationships within the design.</p>
+</div>
+<div class="glass-card p-lg rounded-xl reveal" style="transition-delay:0.1s">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:var(--primary-alpha-10);"><span class="material-symbols-outlined text-primary">database</span></div>
+<h3 class="font-headline-lg text-headline-lg font-bold">Font Database</h3>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">A proprietary database of over 100 font families with distinctive feature vectors enables accurate font matching from visual input alone.</p>
+</div>
+<div class="glass-card p-lg rounded-xl reveal" style="transition-delay:0.2s">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:var(--primary-alpha-10);"><span class="material-symbols-outlined text-primary">palette</span></div>
+<h3 class="font-headline-lg text-headline-lg font-bold">Color Science</h3>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">Advanced color quantization algorithms extract dominant and accent colors while analyzing harmony relationships, contrast ratios, and psychological associations.</p>
+</div>
+<div class="glass-card p-lg rounded-xl reveal" style="transition-delay:0.3s">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:var(--primary-alpha-10);"><span class="material-symbols-outlined text-primary">model_training</span></div>
+<h3 class="font-headline-lg text-headline-lg font-bold">LLM Integration</h3>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">Large language models generate human-readable educational insights, design explanations, recreation guides, and platform-specific prompts based on analysis results.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-xl px-md" style="background:var(--surface-container-low);">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-xl max-w-[600px] mx-auto reveal">
+<h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">Why AI Design Analysis Matters</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Understand the deeper value of automated design deconstruction.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="flex gap-md p-lg glass-card rounded-xl reveal">
+<div class="benefit-icon shrink-0" style="background:var(--primary-alpha-10);color:var(--primary);"><span class="material-symbols-outlined">speed</span></div>
+<div><h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Save Hours of Manual Work</h3><p class="font-body-lg text-body-lg text-on-surface-variant">What takes hours of manual inspection is completed in under 2 seconds. Focus on creating, not reverse-engineering.</p></div>
+</div>
+<div class="flex gap-md p-lg glass-card rounded-xl reveal" style="transition-delay:0.1s">
+<div class="benefit-icon shrink-0" style="background:var(--primary-alpha-10);color:var(--primary);"><span class="material-symbols-outlined">school</span></div>
+<div><h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Accelerate Your Learning</h3><p class="font-body-lg text-body-lg text-on-surface-variant">Each analysis includes educational explanations that teach you the principles behind effective design choices.</p></div>
+</div>
+<div class="flex gap-md p-lg glass-card rounded-xl reveal" style="transition-delay:0.2s">
+<div class="benefit-icon shrink-0" style="background:var(--primary-alpha-10);color:var(--primary);"><span class="material-symbols-outlined">verified</span></div>
+<div><h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Ensure Design Consistency</h3><p class="font-body-lg text-body-lg text-on-surface-variant">Verify that brand guidelines are followed by analyzing any design against your defined color palette and typography rules.</p></div>
+</div>
+<div class="flex gap-md p-lg glass-card rounded-xl reveal" style="transition-delay:0.3s">
+<div class="benefit-icon shrink-0" style="background:var(--primary-alpha-10);color:var(--primary);"><span class="material-symbols-outlined">groups</span></div>
+<div><h3 class="font-headline-lg text-headline-lg font-bold mb-xs">Collaborate Better</h3><p class="font-body-lg text-body-lg text-on-surface-variant">Share analysis reports with your team to align on design decisions, reduce feedback loops, and maintain quality standards.</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-xl px-md">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-xl max-w-[600px] mx-auto reveal">
+<h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">Frequently Asked Questions</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Common questions about AI-powered design analysis.</p>
+</div>
+<div class="max-w-3xl mx-auto space-y-md reveal">
+<details class="glass-card rounded-xl group" style="padding:0;">
+<summary class="flex items-center justify-between p-lg cursor-pointer font-headline-lg text-headline-lg font-bold" style="list-style:none;"><span>What file formats are supported?</span><span class="material-symbols-outlined group-open:rotate-180 transition-transform" style="font-size:20px;">expand_more</span></summary>
+<div class="px-lg pb-lg font-body-lg text-body-lg text-on-surface-variant leading-relaxed" style="border-top:1px solid var(--card-border);padding-top:16px;">We support JPEG, PNG, WebP, GIF, SVG, PDF, and Figma share links. Maximum file size is 50 MB for standard uploads.</div>
+</details>
+<details class="glass-card rounded-xl group" style="padding:0;">
+<summary class="flex items-center justify-between p-lg cursor-pointer font-headline-lg text-headline-lg font-bold" style="list-style:none;"><span>How accurate is the font detection?</span><span class="material-symbols-outlined group-open:rotate-180 transition-transform" style="font-size:20px;">expand_more</span></summary>
+<div class="px-lg pb-lg font-body-lg text-body-lg text-on-surface-variant leading-relaxed" style="border-top:1px solid var(--card-border);padding-top:16px;">Our font detection achieves 99.8% accuracy on clean images and 94% on complex backgrounds. The system matches against 100+ font families and provides confidence scores for every detection.</div>
+</details>
+<details class="glass-card rounded-xl group" style="padding:0;">
+<summary class="flex items-center justify-between p-lg cursor-pointer font-headline-lg text-headline-lg font-bold" style="list-style:none;"><span>Is my design data private?</span><span class="material-symbols-outlined group-open:rotate-180 transition-transform" style="font-size:20px;">expand_more</span></summary>
+<div class="px-lg pb-lg font-body-lg text-body-lg text-on-surface-variant leading-relaxed" style="border-top:1px solid var(--card-border);padding-top:16px;">Absolutely. Uploaded designs are processed in memory and never stored on our servers longer than necessary. We do not use your designs for training or share them with third parties.</div>
+</details>
+<details class="glass-card rounded-xl group" style="padding:0;">
+<summary class="flex items-center justify-between p-lg cursor-pointer font-headline-lg text-headline-lg font-bold" style="list-style:none;"><span>Can I use it commercially?</span><span class="material-symbols-outlined group-open:rotate-180 transition-transform" style="font-size:20px;">expand_more</span></summary>
+<div class="px-lg pb-lg font-body-lg text-body-lg text-on-surface-variant leading-relaxed" style="border-top:1px solid var(--card-border);padding-top:16px;">Yes. Pro and Team plans include commercial usage rights. The Free plan is limited to personal and educational use with up to 5 analyses per month.</div>
+</details>
+<details class="glass-card rounded-xl group" style="padding:0;">
+<summary class="flex items-center justify-between p-lg cursor-pointer font-headline-lg text-headline-lg font-bold" style="list-style:none;"><span>Do I need an account to try it?</span><span class="material-symbols-outlined group-open:rotate-180 transition-transform" style="font-size:20px;">expand_more</span></summary>
+<div class="px-lg pb-lg font-body-lg text-body-lg text-on-surface-variant leading-relaxed" style="border-top:1px solid var(--card-border);padding-top:16px;">You can explore the platform and view demo analyses without an account. To upload your own designs and save results, you will need to create a free account.</div>
+</details>
+</div>
+</div>
+</section>
+
+<section class="py-xl px-md" style="background:var(--surface-container-low);">
+<div class="max-w-container-max mx-auto glass-card rounded-2xl p-lg md:p-xl text-center" style="background:linear-gradient(135deg,var(--primary-alpha-10),var(--surface-container-high));border-color:var(--primary-fixed-dim);">
+<h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm reveal">Ready to Deconstruct Any Design?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-[500px] mx-auto mb-lg reveal">Upload your first design and discover the fonts, colors, and creative decisions behind it in seconds.</p>
+<div class="flex flex-col sm:flex-row gap-md justify-center reveal">
+<a href="<%= user ? '/upload' : '/auth/register' %>" class="cta-glow inline-flex items-center gap-1 font-bold px-xl py-sm rounded-xl" style="background:var(--primary);color:var(--on-primary);font-size:16px;">
+<span><%= user ? 'Upload a Design' : 'Get Started Free' %></span>
+<span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+</a>
+<a href="/features" class="inline-flex items-center gap-1 font-bold px-xl py-sm rounded-xl" style="background:var(--surface-container-high);color:var(--on-surface);border:1px solid var(--card-border);font-size:16px;">
+<span class="material-symbols-outlined" style="font-size:20px;">auto_awesome</span>
+<span>Explore Features</span>
+</a>
+</div>
+</div>
+</section>
+</main>
+<%- include('partials/footer') %>

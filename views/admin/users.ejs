@@ -1,0 +1,133 @@
+<%- include('../partials/header') %>
+<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md">
+    <div>
+      <h1 class="font-headline-lg text-headline-lg mb-xs">User Management</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant">Manage all registered users and their roles</p>
+    </div>
+    <a href="/admin" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back
+    </a>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-xl">
+    <div class="glass-card p-lg rounded-xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-body-sm text-body-md text-on-surface-variant mb-xs">Total Users</p>
+          <p class="font-display-xl text-3xl text-primary font-bold"><%= total %></p>
+        </div>
+        <span class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-[24px]">people</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="glass-card p-lg rounded-xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-body-sm text-body-md text-on-surface-variant mb-xs">This Page</p>
+          <p class="font-display-xl text-3xl text-secondary font-bold"><%= users.length %></p>
+        </div>
+        <span class="w-12 h-12 rounded-lg bg-secondary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-secondary text-[24px]">format_list_bulleted</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="glass-card p-lg rounded-xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-body-sm text-body-md text-on-surface-variant mb-xs">Pages</p>
+          <p class="font-display-xl text-3xl text-tertiary font-bold"><%= page %>/<%= pages %></p>
+        </div>
+        <span class="w-12 h-12 rounded-lg bg-tertiary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-tertiary text-[24px]">layers</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="glass-card rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-white/5 bg-surface-container-high/50">
+            <th class="text-left px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Name</th>
+            <th class="text-left px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Email</th>
+            <th class="text-center px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Role</th>
+            <th class="text-center px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Status</th>
+            <th class="text-right px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Joined</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <% (users || []).forEach((u, idx) => { %>
+            <tr class="hover:bg-white/5 transition-colors">
+              <td class="px-lg py-md">
+                <div class="flex items-center gap-md">
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-secondary/30 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+                    <%= u.name.charAt(0).toUpperCase() %>
+                  </div>
+                  <p class="font-body-md text-on-surface font-bold"><%= u.name %></p>
+                </div>
+              </td>
+              <td class="px-lg py-md">
+                <p class="font-body-sm text-body-sm text-on-surface-variant truncate"><%= u.email %></p>
+              </td>
+              <td class="px-lg py-md text-center">
+                <span class="px-md py-1 rounded-full text-xs font-bold inline-block <%= u.role === 'admin' ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary' %>">
+                  <%= u.role %>
+                </span>
+              </td>
+              <td class="px-lg py-md text-center">
+                <div class="flex items-center justify-center gap-xs">
+                  <span class="w-2 h-2 rounded-full <%= u.is_verified ? 'bg-primary' : 'bg-on-surface-variant/40' %>"></span>
+                  <span class="text-xs font-bold <%= u.is_verified ? 'text-primary' : 'text-on-surface-variant' %>">
+                    <%= u.is_verified ? 'Verified' : 'Pending' %>
+                  </span>
+                </div>
+              </td>
+              <td class="px-lg py-md text-right">
+                <p class="font-label-sm text-label-sm text-on-surface-variant"><%= new Date(u.created_at).toLocaleDateString() %></p>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <% if (pages > 1) { %>
+    <div class="flex items-center justify-center gap-md mt-xl">
+      <% if (page > 1) { %>
+        <a href="/admin/users?page=1" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]">first_page</span>
+        </a>
+        <a href="/admin/users?page=<%= page-1 %>" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </a>
+      <% } %>
+      
+      <div class="flex items-center gap-xs">
+        <span class="text-on-surface-variant font-body-md">Page</span>
+        <input type="number" min="1" max="<%= pages %>" value="<%= page %>" class="w-12 px-sm py-xs bg-surface-container border border-white/10 rounded-lg text-center font-body-md text-on-surface" onchange="window.location.href='/admin/users?page=' + this.value">
+        <span class="text-on-surface-variant font-body-md">of <%= pages %></span>
+      </div>
+
+      <% if (page < pages) { %>
+        <a href="/admin/users?page=<%= page+1 %>" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        </a>
+        <a href="/admin/users?page=<%= pages %>" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]">last_page</span>
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

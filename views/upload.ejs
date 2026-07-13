@@ -1,0 +1,273 @@
+<%- include('partials/header') %>
+<style>
+@keyframes stepIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
+.processing-step { animation: stepIn 0.4s ease-out forwards; opacity:0; }
+.processing-step.done span:first-child { color: #b3c5ff; }
+.processing-step.active span:first-child { animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+.drop-zone.drag-over { border-color: #0066FF; background: rgba(0,102,255,0.05); }
+</style>
+
+<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
+<div class="flex items-center gap-sm mb-xl">
+  <a href="/dashboard" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-xs font-body-md">
+    <span class="material-symbols-outlined">arrow_back</span> Back to Dashboard
+  </a>
+</div>
+<div class="text-center mb-xl reveal">
+<h1 class="font-headline-lg text-headline-lg mb-sm">Analyze Your Design</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Upload a flyer, poster, logo, social media post, or website screenshot and let AI identify the fonts, colors, layout, typography, and design style.</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-lg">
+<div class="lg:col-span-3 space-y-lg">
+
+<div id="uploadState">
+<div id="dropZone" class="drop-zone glass-card p-xl rounded-2xl border-2 border-dashed border-white/10 hover:border-primary/40 transition-all text-center cursor-pointer min-h-[280px] flex items-center justify-center">
+<div class="flex flex-col items-center gap-md">
+<div class="w-20 h-20 rounded-2xl bg-primary/5 flex items-center justify-center">
+<span class="material-symbols-outlined text-5xl text-primary/40" style="font-variation-settings:'FILL'1;">cloud_upload</span>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface">Drag & drop your design here</p>
+<p class="font-body-md text-body-md text-on-surface-variant">or <span class="text-primary font-semibold">browse files</span></p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-xs">PNG, JPG, WEBP, SVG, PDF — Max 20 MB</p>
+<div class="flex gap-sm mt-sm">
+<span class="px-sm py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm text-xs">PNG</span>
+<span class="px-sm py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm text-xs">JPG</span>
+<span class="px-sm py-1 rounded-full bg-tertiary/10 text-tertiary font-label-sm text-label-sm text-xs">WEBP</span>
+<span class="px-sm py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm text-xs">SVG</span>
+<span class="px-sm py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm text-xs">PDF</span>
+</div>
+</div>
+<input id="fileInput" type="file" accept="image/*,.pdf" class="hidden"/>
+</div>
+
+<div class="flex gap-md mt-md">
+<button id="pasteBtn" class="flex-1 py-sm border border-white/10 rounded-xl hover:bg-white/5 transition-all text-on-surface-variant font-body-md flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">content_paste</span> Paste Image
+</button>
+<button class="flex-1 py-sm border border-white/10 rounded-xl hover:bg-white/5 transition-all text-on-surface-variant font-body-md flex items-center justify-center gap-xs opacity-50">
+<span class="material-symbols-outlined text-[18px]">folder_zip</span> Multiple Files <span class="px-sm py-0.5 rounded-full bg-primary/20 text-primary font-label-sm text-label-sm text-[10px]">PRO</span>
+</button>
+</div>
+</div>
+
+<div id="previewState" class="hidden">
+<div class="glass-card rounded-2xl overflow-hidden">
+<div class="relative bg-surface-container-high flex items-center justify-center min-h-[300px] max-h-[400px] overflow-hidden">
+<img id="previewImage" class="max-w-full max-h-[400px] object-contain"/>
+<button id="removeFile" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-error transition-colors border border-white/10">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="p-md flex flex-wrap items-center gap-md">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-primary">description</span></div>
+<div>
+<p id="fileName" class="font-body-md text-body-md text-on-surface font-semibold truncate max-w-[200px]"></p>
+<div class="flex gap-md font-label-sm text-label-sm text-on-surface-variant">
+<span id="fileSize"></span>
+<span id="fileDims"></span>
+</div>
+</div>
+</div>
+<button id="replaceFile" class="ml-auto px-sm py-1 rounded-lg border border-white/10 hover:bg-white/5 transition-all text-on-surface-variant font-label-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">refresh</span> Replace
+</button>
+</div>
+</div>
+</div>
+
+<div id="processingState" class="hidden">
+<div class="glass-card rounded-2xl p-lg text-center">
+<div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-md">
+<span class="material-symbols-outlined text-3xl text-primary animate-spin">progress_activity</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm mb-sm">AI is Analyzing Your Design</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">Please wait while our AI processes your design. This usually takes 5–15 seconds.</p>
+<div class="w-full bg-white/5 rounded-full h-1 mb-lg overflow-hidden">
+<div id="progressBarFull" class="h-full bg-gradient-to-r from-primary to-secondary rounded-full" style="width:0%"></div>
+</div>
+<div class="max-w-sm mx-auto text-left space-y-sm">
+<div id="step0" class="processing-step done flex items-center gap-sm p-sm rounded-lg bg-surface-container-high">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface text-sm">Upload Complete</span>
+</div>
+<div id="step1" class="processing-step flex items-center gap-sm p-sm rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">psychology</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Reading Design</span>
+</div>
+<div id="step2" class="processing-step flex items-center gap-sm p-sm rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">text_fields</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Detecting Fonts</span>
+</div>
+<div id="step3" class="processing-step flex items-center gap-sm p-sm rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">palette</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Extracting Colors</span>
+</div>
+<div id="step4" class="processing-step flex items-center gap-sm p-sm rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">image</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Identifying Images</span>
+</div>
+<div id="step5" class="processing-step flex items-center gap-sm p-sm rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">grid_view</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Understanding Layout</span>
+</div>
+<div id="step6" class="processing-step flex items-center gap-sm p-sm rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">format_align_left</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Evaluating Typography</span>
+</div>
+<div id="step7" class="processing-step flex items-center gap-sm p-sm rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">auto_awesome</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Generating AI Insights</span>
+</div>
+<div id="step8" class="processing-step flex items-center gap-sm p-sm rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">description</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Preparing Report</span>
+</div>
+</div>
+</div>
+</div>
+
+<div id="errorState" class="hidden">
+<div class="error-banner mb-lg">
+<span class="error-banner-icon material-symbols-outlined">error</span>
+<div class="error-banner-content">
+<div class="error-banner-title" id="errorTitle">Upload Failed</div>
+<div class="error-banner-message" id="errorMessage">Something went wrong. Please try again.</div>
+<% if (typeof errorRecovery !== 'undefined' && errorRecovery) { %>
+<div class="text-on-surface-variant font-label-sm text-label-sm mt-xs space-y-xs" id="recoverySuggestions"></div>
+<% } %>
+<div class="error-banner-action">
+<button onclick="resetAll()" class="px-md py-xs">Retry</button>
+<button onclick="resetAll()" class="px-md py-xs ml-xs bg-white/5">Dismiss</button>
+</div>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-lg text-center border border-error/30">
+<span class="material-symbols-outlined text-5xl text-error mb-md">error_outline</span>
+<h2 class="font-headline-sm text-headline-sm mb-sm" id="errorTitle2">Upload Failed</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg" id="errorMessage2">Something went wrong. Please try again.</p>
+<div class="flex gap-md justify-center">
+<button onclick="resetAll()" class="px-xl py-md border border-white/10 rounded-xl hover:bg-white/5 transition-all font-body-md">Try Again</button>
+</div>
+</div>
+</div>
+
+<div id="settingsArea" class="hidden glass-card rounded-2xl p-lg">
+<h2 class="font-headline-sm text-headline-sm mb-md">Analysis Settings</h2>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-sm mb-lg">
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">Font Detection</span>
+</label>
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">Color Analysis</span>
+</label>
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">Typography</span>
+</label>
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">Layout Analysis</span>
+</label>
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">Shape Detection</span>
+</label>
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">Image Detection</span>
+</label>
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">Design Style</span>
+</label>
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">Accessibility</span>
+</label>
+<label class="flex items-center gap-xs p-sm bg-surface-container-high rounded-lg cursor-pointer hover:bg-white/5 transition-colors">
+<input type="checkbox" class="accent-primary" checked disabled/>
+<span class="font-body-md text-body-md text-on-surface text-sm">AI Design Feedback</span>
+</label>
+</div>
+<div class="flex items-center justify-between p-sm bg-surface-container-high rounded-lg">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant">save</span>
+<span class="font-body-md text-body-md text-on-surface text-sm">Save report to account</span>
+</div>
+<div id="saveToggle" class="w-10 h-5 bg-primary rounded-full relative cursor-pointer">
+<div class="w-4 h-4 bg-white rounded-full absolute top-0.5 right-0.5 transition-all"></div>
+</div>
+</div>
+<button id="analyzeBtn" class="w-full mt-lg py-4 bg-primary-container text-on-primary-container rounded-xl font-bold hover:opacity-90 transition-all active:scale-[0.98] cta-glow flex items-center justify-center gap-md text-body-lg">
+<span class="material-symbols-outlined">auto_awesome</span> Analyze Design
+</button>
+</div>
+</div>
+
+<div class="lg:col-span-2 space-y-lg">
+
+<div id="tipsCard" class="glass-card rounded-2xl p-lg">
+<h2 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">tips_and_updates</span> Tips for Best Results
+</h2>
+<ul class="space-y-sm">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_small</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Upload high-resolution images for the most accurate analysis.</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_small</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Avoid blurry or heavily cropped designs — clarity improves detection.</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_small</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">Include the full design where possible for complete analysis.</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">check_small</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm">PNG and PDF formats typically provide the best results.</span>
+</li>
+</ul>
+</div>
+
+<div id="recentCard" class="glass-card rounded-2xl p-lg <%= (typeof recentAnalyses !== 'undefined' && recentAnalyses && recentAnalyses.length > 0) ? '' : 'hidden' %>">
+<div class="flex items-center justify-between mb-md">
+<h2 class="font-headline-sm text-headline-sm flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">history</span> Recent Uploads
+</h2>
+<a href="/history" class="text-primary font-body-md text-sm hover:underline">View all</a>
+</div>
+<div class="space-y-sm">
+<% if (typeof recentAnalyses !== 'undefined' && recentAnalyses && recentAnalyses.length > 0) { %>
+<% recentAnalyses.slice(0, 3).forEach(a => { %>
+<a href="/analysis/<%= a.id %>" class="flex items-center gap-sm p-sm rounded-xl bg-surface-container-high hover:bg-white/5 transition-all">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[18px]">image</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface text-sm truncate"><%= a.title || 'Untitled' %></p>
+<p class="font-label-sm text-label-sm text-on-surface-variant"><%= new Date(a.created_at).toLocaleDateString() %></p>
+</div>
+<span class="px-sm py-0.5 rounded-full text-[10px] font-bold <%= a.status === 'completed' ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary' %>"><%= a.status %></span>
+</a>
+<% }) %>
+<% } %>
+</div>
+</div>
+
+<div id="emptyRecent" class="glass-card rounded-2xl p-lg text-center <%= (typeof recentAnalyses !== 'undefined' && recentAnalyses && recentAnalyses.length > 0) ? 'hidden' : '' %>">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant/20 mb-md" style="font-variation-settings:'FILL'1;">insights</span>
+<p class="font-body-md text-body-md text-on-surface-variant">No designs uploaded yet</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-xs">Upload your first design to begin</p>
+</div>
+</div>
+</div>
+</div>
+
+<script src="/js/upload.js"></script>
+<%- include('partials/footer') %>

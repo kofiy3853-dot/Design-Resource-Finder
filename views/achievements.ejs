@@ -1,0 +1,81 @@
+<%- include('partials/header') %>
+<div class="pt-24 pb-xl">
+  <div class="max-w-7xl mx-auto px-md">
+    <!-- Header -->
+    <h1 class="font-headline-lg text-headline-lg text-on-surface mb-md">Your Achievements</h1>
+    <p class="font-body-md text-body-md text-on-surface-variant mb-lg">Track your progress and unlock badges as you analyze more designs</p>
+
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md mb-lg">
+      <div class="glass-card p-lg rounded-xl">
+        <div class="flex items-center justify-between mb-md">
+          <span class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary">trending_up</span>
+          </span>
+        </div>
+        <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">Total Analyses</p>
+        <p class="font-display-xl text-3xl text-on-surface font-bold"><%= stats.total_analyses || 0 %></p>
+      </div>
+
+      <div class="glass-card p-lg rounded-xl">
+        <div class="flex items-center justify-between mb-md">
+          <span class="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-secondary">local_fire_department</span>
+          </span>
+        </div>
+        <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">Current Streak</p>
+        <p class="font-display-xl text-3xl text-on-surface font-bold"><%= streak.current_streak || 0 %></p>
+        <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Best: <%= streak.longest_streak || 0 %></p>
+      </div>
+
+      <div class="glass-card p-lg rounded-xl">
+        <div class="flex items-center justify-between mb-md">
+          <span class="w-10 h-10 rounded-lg bg-tertiary/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-tertiary">bookmark</span>
+          </span>
+        </div>
+        <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">Saved Items</p>
+        <p class="font-display-xl text-3xl text-on-surface font-bold"><%= stats.total_favorites || 0 %></p>
+      </div>
+
+      <div class="glass-card p-lg rounded-xl">
+        <div class="flex items-center justify-between mb-md">
+          <span class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary">stars</span>
+          </span>
+        </div>
+        <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">Avg. Confidence</p>
+        <p class="font-display-xl text-3xl text-on-surface font-bold"><%= Math.round(stats.avg_confidence_score || 0) %>%</p>
+      </div>
+    </div>
+
+    <!-- Achievements Grid -->
+    <div>
+      <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Badges Earned</h2>
+      
+      <% if (achievements && achievements.length > 0) { %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
+        <% achievements.forEach(a => { %>
+        <div class="glass-card p-md rounded-xl flex items-start gap-md hover:border-primary/30 transition-all">
+          <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-primary text-2xl"><%= a.icon_name %></span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-body-md text-body-md text-on-surface font-bold"><%= a.achievement_name %></p>
+            <p class="font-label-sm text-label-sm text-on-surface-variant line-clamp-2"><%= a.description %></p>
+            <p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-xs">Earned <%= new Date(a.earned_at).toLocaleDateString() %></p>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="glass-card p-lg rounded-xl text-center">
+        <span class="material-symbols-outlined text-5xl text-on-surface-variant/30 block mb-md">emoji_events</span>
+        <p class="font-body-md text-body-md text-on-surface-variant">Start analyzing designs to earn badges!</p>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

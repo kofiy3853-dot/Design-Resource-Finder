@@ -1,0 +1,93 @@
+<%- include('partials/header') %>
+<main class="pt-24 pb-xl">
+  <div class="max-w-container-max mx-auto px-md">
+    <div class="flex items-center gap-sm mb-lg">
+      <a href="/dashboard" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-xs font-body-md">
+        <span class="material-symbols-outlined">arrow_back</span> Back to Dashboard
+      </a>
+      <h1 class="font-headline-lg text-headline-lg mb-sm">Design Resources</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant">Curated resources for your design projects</p>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="flex gap-sm overflow-x-auto pb-md mb-lg" style="scrollbar-width: none;">
+      <% const cats = ['All', 'Fonts', 'Colors', 'Icons', 'Illustrations', 'Stock Photos', 'UI Kits', 'Patterns', 'Tools']; %>
+      <% cats.forEach((cat, i) => { %>
+        <button class="pill <%= i===0?'active':'' %>" data-cat="<%= cat.toLowerCase() %>"><%= cat %></button>
+      <% }) %>
+    </div>
+
+    <!-- Resources Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg" id="resourcesGrid">
+      <% const resources = [
+        { title: 'Google Fonts', cat: 'fonts', desc: 'Free, open-source fonts for web and print', link: 'https://fonts.google.com' },
+        { title: 'Font Squirrel', cat: 'fonts', desc: 'Hand-picked free fonts for commercial use', link: 'https://fontsquirrel.com' },
+        { title: 'Adobe Fonts', cat: 'fonts', desc: 'Premium fonts with Creative Cloud', link: 'https://fonts.adobe.com' },
+        { title: 'Coolors', cat: 'colors', desc: 'Super fast color palette generator', link: 'https://coolors.co' },
+        { title: 'Color Hunt', cat: 'colors', desc: 'Curated color palettes for inspiration', link: 'https://colorhunt.co' },
+        { title: 'UI Gradients', cat: 'colors', desc: 'Beautiful gradient combinations', link: 'https://uigradients.com' },
+        { title: 'Lucide Icons', cat: 'icons', desc: 'Beautiful, consistent icon set', link: 'https://lucide.dev' },
+        { title: 'Material Symbols', cat: 'icons', desc: "Google's official icon font", link: 'https://fonts.google.com/icons' },
+        { title: 'Heroicons', cat: 'icons', desc: 'Hand-crafted SVG icons by Tailwind', link: 'https://heroicons.com' },
+        { title: 'unDraw', cat: 'illustrations', desc: 'Open-source illustrations for any project', link: 'https://undraw.co' },
+        { title: 'Humaaans', cat: 'illustrations', desc: 'Mix-&-match illustration library', link: 'https://humaaans.com' },
+        { title: 'DrawKit', cat: 'illustrations', desc: 'Beautiful free illustrations', link: 'https://drawkit.io' },
+        { title: 'Unsplash', cat: 'stock photos', desc: 'Free high-resolution photos', link: 'https://unsplash.com' },
+        { title: 'Pexels', cat: 'stock photos', desc: 'Free stock photos & videos', link: 'https://pexels.com' },
+        { title: 'Tailwind UI', cat: 'ui kits', desc: 'Official Tailwind CSS components', link: 'https://tailwindui.com' },
+        { title: 'shadcn/ui', cat: 'ui kits', desc: 'Beautiful accessible components', link: 'https://ui.shadcn.com' },
+        { title: 'Hero Patterns', cat: 'patterns', desc: 'Repeatable SVG background patterns', link: 'https://heropatterns.com' },
+        { title: 'SVG Backgrounds', cat: 'patterns', desc: 'Customizable SVG backgrounds', link: 'https://svgbackgrounds.com' },
+        { title: 'Figma Community', cat: 'tools', desc: 'Design files, plugins, widgets', link: 'https://figma.com/community' },
+        { title: 'Penpot', cat: 'tools', desc: 'Open-source design & prototyping', link: 'https://penpot.app' },
+      ]; %>
+      <% resources.forEach(r => { %>
+        <div class="resource-card glass-card rounded-2xl p-lg" data-cat="<%= r.cat %>">
+          <div class="flex items-start gap-md">
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-primary"><%= 
+                r.cat==='fonts'?'font_download':
+                r.cat==='colors'?'palette':
+                r.cat==='icons'?'widgets':
+                r.cat==='illustrations'?'brush':
+                r.cat==='stock photos'?'photo_library':
+                r.cat==='ui kits'?'dashboard':
+                r.cat==='patterns'?'texture':
+                'build_circle' %></span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-headline-sm text-headline-sm truncate"><%= r.title %></h3>
+              <p class="font-body-md text-body-md text-on-surface-variant mt-xs"><%= r.desc %></p>
+            </div>
+          </div>
+          <a href="<%= r.link %>" target="_blank" class="mt-md inline-flex items-center gap-xs text-primary font-body-md hover:underline">
+            Visit <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+          </a>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</main>
+
+<script>
+(function() {
+  'use strict';
+  
+  const pills = document.querySelectorAll('.pill');
+  const cards = document.querySelectorAll('.resource-card');
+  
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      
+      const filter = pill.getAttribute('data-cat');
+      cards.forEach(card => {
+        const cat = card.getAttribute('data-cat');
+        card.style.display = (filter === 'all' || cat === filter) ? '' : 'none';
+      });
+    });
+  });
+})();
+</script>
+<%- include('partials/footer') %>

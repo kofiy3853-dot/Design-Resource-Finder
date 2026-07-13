@@ -1,0 +1,425 @@
+<%- include('partials/header') %>
+<style>
+.process-step { position: relative; }
+.process-step::before { content: ''; position: absolute; top: 48px; left: 24px; width: 2px; height: calc(100% + 16px); background: linear-gradient(to bottom, rgba(179,197,255,0.3), transparent); }
+.process-step:last-child::before { display: none; }
+.flow-arrow { animation: flowDown 2s ease-in-out infinite; }
+@keyframes flowDown { 0%,100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(8px); opacity: 1; } }
+.stat-card { transition: all 0.3s ease-out; }
+.stat-card:hover { transform: translateY(-4px); }
+.faq-q { cursor: pointer; transition: all 0.2s; }
+.faq-q:hover { background: rgba(255,255,255,0.03); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+.faq-a.open { max-height: 200px; }
+</style>
+
+<section class="relative min-h-[80vh] flex items-center pt-24 overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/5 via-surface to-secondary-container/5"></div>
+<div class="relative z-10 max-w-container-max mx-auto px-md w-full">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-xl items-center">
+<div class="reveal">
+<div class="inline-flex items-center gap-xs px-sm py-xs bg-secondary-container/20 border border-secondary-container/30 rounded-full mb-md">
+<span class="material-symbols-outlined text-secondary text-[18px]">timeline</span>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Transparent Process</span>
+</div>
+<h1 class="font-display-xl text-display-xl hero-gradient-text mb-sm">See How Our AI Analyzes Every Design</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg mb-lg">
+Upload any design in seconds and receive a detailed breakdown of its fonts, colors, layout, typography, images, and design style.
+</p>
+<div class="flex flex-col sm:flex-row gap-md">
+<a href="<%= user ? '/upload' : '/auth/register' %>" class="cta-glow bg-primary-container text-on-primary-container font-bold px-xl py-md rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center gap-xs text-body-lg">
+<span class="material-symbols-outlined">upload_file</span> Upload a Design
+</a>
+<a href="#process" class="border border-white/15 bg-white/5 backdrop-blur-md text-on-surface font-bold px-xl py-md rounded-xl hover:bg-white/10 transition-all active:scale-95 text-body-lg flex items-center gap-xs">
+<span class="material-symbols-outlined">play_circle</span> Watch Demo
+</a>
+</div>
+</div>
+<div class="reveal" style="transition-delay:0.2s">
+<div class="glass-card rounded-2xl p-lg border-primary/20 shadow-2xl shadow-primary/5">
+<div class="space-y-md">
+<div class="flex items-center gap-md p-sm bg-surface-container-high rounded-lg">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-primary">upload_file</span></div>
+<div class="flex-1"><p class="font-body-md text-body-md text-on-surface font-semibold">Upload</p><p class="font-label-sm text-label-sm text-on-surface-variant">Design uploaded · 2.4 MB</p></div>
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+<div class="flex justify-center"><span class="material-symbols-outlined text-on-surface-variant/30 flow-arrow">arrow_downward</span></div>
+<div class="flex items-center gap-md p-sm bg-surface-container-high rounded-lg">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center"><span class="material-symbols-outlined text-secondary">psychology</span></div>
+<div class="flex-1"><p class="font-body-md text-body-md text-on-surface font-semibold">AI Processing</p><p class="font-label-sm text-label-sm text-on-surface-variant">Analyzing visual elements...</p></div>
+<span class="material-symbols-outlined text-secondary animate-pulse">sync</span>
+</div>
+<div class="flex justify-center"><span class="material-symbols-outlined text-on-surface-variant/30 flow-arrow" style="animation-delay:0.5s">arrow_downward</span></div>
+<div class="flex items-center gap-md p-sm bg-surface-container-high rounded-lg border-l-4 border-l-primary">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-primary">description</span></div>
+<div class="flex-1"><p class="font-body-md text-body-md text-on-surface font-semibold">Analysis Report</p><p class="font-label-sm text-label-sm text-on-surface-variant">6 sections · 95% confidence</p></div>
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="process" class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Six Steps to Design Mastery</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">From upload to actionable insights — a transparent, AI-powered pipeline.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<div class="process-step glass-card p-lg rounded-xl reveal">
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0 relative z-10"><span class="material-symbols-outlined text-primary">upload_file</span></div>
+<div><span class="font-label-sm text-label-sm text-primary font-bold">Step 1</span>
+<h3 class="font-headline-sm text-headline-sm mb-xs mt-xs">Upload</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Drag and drop, browse files, or paste from clipboard. Supports PNG, JPG, WEBP, SVG, and PDF up to 20MB.</p></div>
+</div>
+</div>
+<div class="process-step glass-card p-lg rounded-xl reveal" style="transition-delay:0.08s">
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center shrink-0 relative z-10"><span class="material-symbols-outlined text-secondary">psychology</span></div>
+<div><span class="font-label-sm text-label-sm text-secondary font-bold">Step 2</span>
+<h3 class="font-headline-sm text-headline-sm mb-xs mt-xs">AI Reads the Design</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">The AI scans every visual element — text, colors, spacing, composition, and structural patterns.</p></div>
+</div>
+</div>
+<div class="process-step glass-card p-lg rounded-xl reveal" style="transition-delay:0.16s">
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center shrink-0 relative z-10"><span class="material-symbols-outlined text-tertiary">search_insights</span></div>
+<div><span class="font-label-sm text-label-sm text-tertiary font-bold">Step 3</span>
+<h3 class="font-headline-sm text-headline-sm mb-xs mt-xs">Design Detection</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Identifies fonts, colors, images, icons, shapes, backgrounds, logos, and decorative elements.</p></div>
+</div>
+</div>
+<div class="process-step glass-card p-lg rounded-xl reveal" style="transition-delay:0.24s">
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0 relative z-10"><span class="material-symbols-outlined text-primary">bar_chart</span></div>
+<div><span class="font-label-sm text-label-sm text-primary font-bold">Step 4</span>
+<h3 class="font-headline-sm text-headline-sm mb-xs mt-xs">Deep Analysis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Evaluates typography, layout, hierarchy, accessibility, visual balance, and overall readability.</p></div>
+</div>
+</div>
+<div class="process-step glass-card p-lg rounded-xl reveal" style="transition-delay:0.32s">
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center shrink-0 relative z-10"><span class="material-symbols-outlined text-secondary">lightbulb</span></div>
+<div><span class="font-label-sm text-label-sm text-secondary font-bold">Step 5</span>
+<h3 class="font-headline-sm text-headline-sm mb-xs mt-xs">AI Recommendations</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Receive design tips, improvement suggestions, similar fonts and colors, and resource recommendations.</p></div>
+</div>
+</div>
+<div class="process-step glass-card p-lg rounded-xl reveal" style="transition-delay:0.4s">
+<div class="flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-tertiary/10 flex items-center justify-center shrink-0 relative z-10"><span class="material-symbols-outlined text-tertiary">description</span></div>
+<div><span class="font-label-sm text-label-sm text-tertiary font-bold">Step 6</span>
+<h3 class="font-headline-sm text-headline-sm mb-xs mt-xs">Download Report</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Export your complete analysis as PDF, JSON, or color palette for use in your workflow.</p></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-xl bg-surface-container overflow-hidden">
+<div class="max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">AI Analysis Breakdown</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Here's what our AI detects and analyzes in every design you upload.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<div class="glass-card p-md rounded-xl reveal">
+<div class="flex items-center gap-sm mb-sm">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-primary">text_fields</span></div>
+<h3 class="font-headline-sm text-headline-sm text-sm">Font Detection</h3>
+</div>
+<ul class="space-y-1 font-body-md text-body-md text-on-surface-variant text-sm">
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-primary text-[16px]">check</span> Font Name</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-primary text-[16px]">check</span> Family & Weight</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-primary text-[16px]">check</span> Similar Alternatives</li>
+</ul>
+</div>
+<div class="glass-card p-md rounded-xl reveal" style="transition-delay:0.06s">
+<div class="flex items-center gap-sm mb-sm">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center"><span class="material-symbols-outlined text-secondary">palette</span></div>
+<h3 class="font-headline-sm text-headline-sm text-sm">Color Analysis</h3>
+</div>
+<ul class="space-y-1 font-body-md text-body-md text-on-surface-variant text-sm">
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-secondary text-[16px]">check</span> Primary & Accent Colors</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-secondary text-[16px]">check</span> HEX · RGB · HSL Values</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-secondary text-[16px]">check</span> Color Harmony Assessment</li>
+</ul>
+</div>
+<div class="glass-card p-md rounded-xl reveal" style="transition-delay:0.12s">
+<div class="flex items-center gap-sm mb-sm">
+<div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center"><span class="material-symbols-outlined text-tertiary">grid_view</span></div>
+<h3 class="font-headline-sm text-headline-sm text-sm">Layout Analysis</h3>
+</div>
+<ul class="space-y-1 font-body-md text-body-md text-on-surface-variant text-sm">
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-tertiary text-[16px]">check</span> Grid Structure</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-tertiary text-[16px]">check</span> Alignment & Margins</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-tertiary text-[16px]">check</span> White Space Analysis</li>
+</ul>
+</div>
+<div class="glass-card p-md rounded-xl reveal" style="transition-delay:0.18s">
+<div class="flex items-center gap-sm mb-sm">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-primary">format_align_left</span></div>
+<h3 class="font-headline-sm text-headline-sm text-sm">Typography Analysis</h3>
+</div>
+<ul class="space-y-1 font-body-md text-body-md text-on-surface-variant text-sm">
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-primary text-[16px]">check</span> Hierarchy & Readability</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-primary text-[16px]">check</span> Font Pairing Quality</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-primary text-[16px]">check</span> Letter Spacing & Leading</li>
+</ul>
+</div>
+<div class="glass-card p-md rounded-xl reveal" style="transition-delay:0.24s">
+<div class="flex items-center gap-sm mb-sm">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center"><span class="material-symbols-outlined text-secondary">auto_awesome</span></div>
+<h3 class="font-headline-sm text-headline-sm text-sm">Design Style</h3>
+</div>
+<ul class="space-y-1 font-body-md text-body-md text-on-surface-variant text-sm">
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-secondary text-[16px]">check</span> Minimal · Luxury · Corporate</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-secondary text-[16px]">check</span> Modern · Editorial · Vintage</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-secondary text-[16px]">check</span> Style Confidence Percentage</li>
+</ul>
+</div>
+<div class="glass-card p-md rounded-xl reveal" style="transition-delay:0.3s">
+<div class="flex items-center gap-sm mb-sm">
+<div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center"><span class="material-symbols-outlined text-tertiary">shield</span></div>
+<h3 class="font-headline-sm text-headline-sm text-sm">Accessibility Check</h3>
+</div>
+<ul class="space-y-1 font-body-md text-body-md text-on-surface-variant text-sm">
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-tertiary text-[16px]">check</span> Contrast Ratio Analysis</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-tertiary text-[16px]">check</span> WCAG AA/AAA Compliance</li>
+<li class="flex items-center gap-xs"><span class="material-symbols-outlined text-tertiary text-[16px]">check</span> Improvement Recommendations</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Sample Analysis Report</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Here's what a completed analysis looks like — every design deconstructed in seconds.</p>
+</div>
+<div class="glass-card rounded-2xl p-lg md:p-xl max-w-4xl mx-auto reveal">
+<div class="flex items-center justify-between mb-lg pb-lg border-b border-white/5">
+<div class="flex items-center gap-sm"><span class="material-symbols-outlined text-primary text-2xl">check_circle</span><span class="font-headline-sm text-headline-sm text-primary font-bold">Design Score</span></div>
+<span class="font-display-xl text-4xl hero-gradient-text">95%</span>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-md">
+<div class="p-md bg-surface-container-high rounded-xl">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Fonts</p>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Poppins</p>
+<p class="font-body-md text-body-md text-on-surface">Montserrat</p>
+</div>
+<div class="p-md bg-surface-container-high rounded-xl">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Colors</p>
+<div class="flex gap-1 mt-xs">
+<div class="w-6 h-6 rounded border border-white/10" style="background:#F97316"></div>
+<div class="w-6 h-6 rounded border border-white/10" style="background:#FFFFFF"></div>
+<div class="w-6 h-6 rounded border border-white/10" style="background:#111827"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">#F97316 · #FFF · #111827</p>
+</div>
+<div class="p-md bg-surface-container-high rounded-xl">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Style</p>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Modern</p>
+<p class="font-body-md text-body-md text-on-surface">Corporate</p>
+</div>
+<div class="p-md bg-surface-container-high rounded-xl">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Layout</p>
+<p class="font-body-md text-body-md text-on-surface font-semibold">12-Column Grid</p>
+<p class="font-body-md text-body-md text-on-surface">Symmetrical</p>
+</div>
+<div class="p-md bg-surface-container-high rounded-xl">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Accessibility</p>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-primary">Excellent</p>
+<p class="font-body-md text-body-md text-on-surface">WCAG AA</p>
+</div>
+<div class="p-md bg-surface-container-high rounded-xl">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Confidence</p>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-secondary">95% Accuracy</p>
+<p class="font-body-md text-body-md text-on-surface">AI Verified</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Designs You Can Analyze</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">From print to digital — our AI handles a wide range of design formats.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-md">
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal">
+<span class="material-symbols-outlined text-3xl text-primary mb-xs">description</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Flyers</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.05s">
+<span class="material-symbols-outlined text-3xl text-secondary mb-xs">campaign</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Posters</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.1s">
+<span class="material-symbols-outlined text-3xl text-tertiary mb-xs">smart_display</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Social Posts</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.15s">
+<span class="material-symbols-outlined text-3xl text-primary mb-xs">brand_awareness</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Logos</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.2s">
+<span class="material-symbols-outlined text-3xl text-secondary mb-xs">credit_card</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Business Cards</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.25s">
+<span class="material-symbols-outlined text-3xl text-tertiary mb-xs">menu_book</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Brochures</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.3s">
+<span class="material-symbols-outlined text-3xl text-primary mb-xs">inventory_2</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Packaging</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.35s">
+<span class="material-symbols-outlined text-3xl text-secondary mb-xs">devices</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Screenshots</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.4s">
+<span class="material-symbols-outlined text-3xl text-tertiary mb-xs">pie_chart</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Infographics</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center hover:border-primary/30 transition-all reveal" style="transition-delay:0.45s">
+<span class="material-symbols-outlined text-3xl text-primary mb-xs">flag</span>
+<p class="font-body-md text-body-md text-on-surface font-semibold text-sm">Banners</p>
+</div>
+</div>
+<div class="flex flex-wrap justify-center gap-sm mt-lg reveal">
+<span class="px-md py-sm rounded-full bg-primary/10 text-primary font-label-sm text-label-sm border border-primary/20">PNG</span>
+<span class="px-md py-sm rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm border border-secondary/20">JPG</span>
+<span class="px-md py-sm rounded-full bg-tertiary/10 text-tertiary font-label-sm text-label-sm border border-tertiary/20">WEBP</span>
+<span class="px-md py-sm rounded-full bg-primary/10 text-primary font-label-sm text-label-sm border border-primary/20">SVG</span>
+<span class="px-md py-sm rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm border border-secondary/20">PDF</span>
+</div>
+</section>
+
+<section class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Lightning-Fast Processing</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Our AI delivers results in seconds without compromising on accuracy.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="stat-card glass-card p-lg rounded-xl text-center reveal">
+<span class="material-symbols-outlined text-4xl text-primary mb-sm">bolt</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Average Processing</p>
+<p class="font-display-xl text-3xl hero-gradient-text">5–15s</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Seconds per design</p>
+</div>
+<div class="stat-card glass-card p-lg rounded-xl text-center reveal" style="transition-delay:0.1s">
+<span class="material-symbols-outlined text-4xl text-secondary mb-sm">analytics</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Average Accuracy</p>
+<p class="font-display-xl text-3xl hero-gradient-text">90–98%</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">AI confidence score</p>
+</div>
+<div class="stat-card glass-card p-lg rounded-xl text-center reveal" style="transition-delay:0.2s">
+<span class="material-symbols-outlined text-4xl text-tertiary mb-sm">storage</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-xs">Upload Limit</p>
+<p class="font-display-xl text-3xl hero-gradient-text">20 MB</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Per file</p>
+</div>
+</div>
+</section>
+
+<section class="py-xl bg-surface-container overflow-hidden">
+<div class="max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Your Privacy & Security Matter</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">We take the protection of your designs seriously.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+<div class="glass-card p-md rounded-xl text-center reveal">
+<span class="material-symbols-outlined text-3xl text-primary mb-sm">encrypted</span>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Encrypted in Transit</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">All uploads are encrypted using TLS 1.3 during transmission.</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.08s">
+<span class="material-symbols-outlined text-3xl text-secondary mb-sm">settings_account_box</span>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">You Control Storage</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Choose whether to save analyses to your account or run one-time scans.</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.16s">
+<span class="material-symbols-outlined text-3xl text-tertiary mb-sm">visibility_off</span>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Private by Default</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Your designs are never shared publicly without your explicit permission.</p>
+</div>
+<div class="glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.24s">
+<span class="material-symbols-outlined text-3xl text-primary mb-sm">lock</span>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Account-Only Access</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Reports are accessible only to you unless you choose to share them.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Frequently Asked Questions</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Everything you need to know about how our AI analysis works.</p>
+</div>
+<div class="max-w-3xl mx-auto space-y-sm">
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="faq-q p-lg flex items-center justify-between cursor-pointer" onclick="toggleFaq(this)">
+<h3 class="font-body-md text-body-md text-on-surface font-semibold">Can the AI identify every font?</h3>
+<span class="material-symbols-outlined text-on-surface-variant transition-transform" style="transition:transform 0.2s">expand_more</span>
+</div>
+<div class="faq-a px-lg pb-lg"><p class="font-body-md text-body-md text-on-surface-variant">It identifies many common fonts and suggests close alternatives when an exact match isn't possible. Accuracy depends on image quality, resolution, and font complexity.</p></div>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="faq-q p-lg flex items-center justify-between cursor-pointer" onclick="toggleFaq(this)">
+<h3 class="font-body-md text-body-md text-on-surface font-semibold">Can I analyze logos?</h3>
+<span class="material-symbols-outlined text-on-surface-variant transition-transform" style="transition:transform 0.2s">expand_more</span>
+</div>
+<div class="faq-a px-lg pb-lg"><p class="font-body-md text-body-md text-on-surface-variant">Yes. Logo analysis works well for most designs, though results may vary depending on image quality, complexity, and whether text is embedded in the artwork.</p></div>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="faq-q p-lg flex items-center justify-between cursor-pointer" onclick="toggleFaq(this)">
+<h3 class="font-body-md text-body-md text-on-surface font-semibold">Can I upload PDFs?</h3>
+<span class="material-symbols-outlined text-on-surface-variant transition-transform" style="transition:transform 0.2s">expand_more</span>
+</div>
+<div class="faq-a px-lg pb-lg"><p class="font-body-md text-body-md text-on-surface-variant">Yes, PDF uploads are fully supported. The AI converts the first page of your PDF to an image for visual analysis.</p></div>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="faq-q p-lg flex items-center justify-between cursor-pointer" onclick="toggleFaq(this)">
+<h3 class="font-body-md text-body-md text-on-surface font-semibold">Do you save my images?</h3>
+<span class="material-symbols-outlined text-on-surface-variant transition-transform" style="transition:transform 0.2s">expand_more</span>
+</div>
+<div class="faq-a px-lg pb-lg"><p class="font-body-md text-body-md text-on-surface-variant">Only if you choose to save them to your account. You can run a one-time analysis without storing anything permanently.</p></div>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<div class="faq-q p-lg flex items-center justify-between cursor-pointer" onclick="toggleFaq(this)">
+<h3 class="font-body-md text-body-md text-on-surface font-semibold">How long does analysis take?</h3>
+<span class="material-symbols-outlined text-on-surface-variant transition-transform" style="transition:transform 0.2s">expand_more</span>
+</div>
+<div class="faq-a px-lg pb-lg"><p class="font-body-md text-body-md text-on-surface-variant">Most analyses complete within 5–15 seconds. Complex designs with many elements may take slightly longer.</p></div>
+</div>
+</div>
+<script src="/js/how-it-works.js"></script>
+</section>
+
+<section class="py-xl relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/20 via-surface to-secondary-container/10"></div>
+<div class="relative z-10 max-w-container-max mx-auto px-md text-center">
+<h2 class="font-display-xl text-display-xl hero-gradient-text mb-sm reveal">Ready to Discover the Secrets Behind Great Design?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-lg reveal">
+Upload your first design today and receive a detailed AI-powered analysis in seconds.
+</p>
+<div class="flex flex-col sm:flex-row gap-md justify-center reveal">
+<a href="<%= user ? '/upload' : '/auth/register' %>" class="cta-glow bg-primary-container text-on-primary-container font-bold px-xl py-md rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center gap-xs text-body-lg">
+<span class="material-symbols-outlined">auto_awesome</span> Start Free
+</a>
+<a href="<%= user ? '/upload' : '/auth/register' %>" class="border border-white/15 bg-white/5 backdrop-blur-md text-on-surface font-bold px-xl py-md rounded-xl hover:bg-white/10 transition-all active:scale-95 text-body-lg flex items-center gap-xs">
+<span class="material-symbols-outlined">upload_file</span> Upload Design
+</a>
+</div>
+</div>
+</section>
+
+<%- include('partials/footer') %>

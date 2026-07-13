@@ -1,0 +1,929 @@
+<%- include('partials/header-app') %>
+<div class="dash-page">
+  <div class="dash-sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="dash-layout">
+    <aside class="dash-sidebar" id="sidebar">
+      <div class="dash-sidebar-header">
+        <div class="dash-sidebar-logo"><span class="material-symbols-outlined">auto_awesome</span></div>
+        <div class="dash-sidebar-brand">
+          <h3>Design Resource Finder</h3>
+          <p>Dashboard</p>
+        </div>
+      </div>
+      <nav class="dash-sidebar-nav">
+        <ul>
+          <li class="dash-nav-label">Main</li>
+          <li><a class="dash-nav-item" href="/dashboard"><span class="material-symbols-outlined">dashboard</span> Dashboard</a></li>
+          <li><a class="dash-nav-item" href="/upload"><span class="material-symbols-outlined">upload_file</span> Upload Design</a></li>
+          <li><a class="dash-nav-item" href="/history"><span class="material-symbols-outlined">history</span> History</a></li>
+          <li><a class="dash-nav-item" href="/projects"><span class="material-symbols-outlined">folder</span> Projects</a></li>
+          <li><a class="dash-nav-item" href="/favorites"><span class="material-symbols-outlined">favorite</span> Favorites</a></li>
+          <li><a class="dash-nav-item" href="/bg-generator"><span class="material-symbols-outlined">auto_fix_high</span> AI Background Generator</a></li>
+          <li class="dash-nav-label">Resources</li>
+          <li><a class="dash-nav-item" href="/resources"><span class="material-symbols-outlined">grid_view</span> Resources</a></li>
+          <li><a class="dash-nav-item" href="/pricing"><span class="material-symbols-outlined">sell</span> Pricing</a></li>
+          <li><a class="dash-nav-item" href="/settings"><span class="material-symbols-outlined">settings</span> Settings</a></li>
+          <li><a class="dash-nav-item" href="/help"><span class="material-symbols-outlined">help</span> Help & Support</a></li>
+        </ul>
+      </nav>
+      <div class="dash-sidebar-footer">
+        <div class="dash-upgrade-card">
+          <h4>Upgrade to Pro</h4>
+          <p>Unlock unlimited analyses</p>
+          <a href="/pricing" class="dash-upgrade-btn dash-ripple">Upgrade Now</a>
+        </div>
+        <div class="dash-user-card">
+          <div class="dash-avatar"><%= user?.name ? user.name.charAt(0).toUpperCase() : 'U' %></div>
+          <div class="dash-user-info">
+            <h4><%= user?.name || 'User' %></h4>
+            <p><%= user?.email || 'user@example.com' %></p>
+          </div>
+          <span class="material-symbols-outlined dash-user-toggle" id="userMenuToggle">expand_more</span>
+          <div class="dash-user-dropdown" id="userDropdown">
+            <a href="/profile">Profile</a>
+            <a href="/settings">Settings</a>
+            <a href="/achievements">Achievements</a>
+            <a href="/auth/logout" class="dash-logout">Sign Out</a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <div class="dash-content">
+<%
+function generateCSSVariables(colors) {
+  if (!colors || !colors.length) return '/* No colors to export */';
+  const usedNames = new Set();
+  return ':root {\n' + colors.map((col, i) => {
+    let name = (col.name || col.hex.replace('#', 'color')).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    if (usedNames.has(name)) name += '-' + i;
+    usedNames.add(name);
+    return `  --${name}: ${col.hex};${col.percentage ? ` /* ${col.percentage}% */` : ''}`;
+  }).join('\n') + '\n}';
+}
+%>
+<style>
+  .sidebar-section { transition: all 0.3s ease; }
+  .sidebar-btn { 
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+    position: relative; 
+    padding: 0.75rem 1rem; 
+    border-radius: 0.75rem; 
+    display: flex; 
+    align-items: center; 
+    gap: 0.75rem; 
+    white-space: nowrap; 
+    color: var(--on-surface-variant);
+    border: 1px solid transparent;
+  }
+  .sidebar-btn.active { 
+    color: var(--primary); 
+    background: var(--primary-alpha-10); 
+    border-color: var(--primary-fixed-dim);
+    font-weight: 500;
+  }
+  .sidebar-btn:hover:not(.active) { 
+    background: var(--white-alpha-5); 
+    border-color: var(--white-alpha-10);
+    color: var(--on-surface);
+  }
+  .sidebar-btn .material-symbols-outlined { font-variation-settings: 'FILL' 0; }
+  .sidebar-btn.active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+  .tab-content { display: none; animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(8px); } 
+    to { opacity: 1; transform: translateY(0); } 
+  }
+  .toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; animation: slideUp 0.3s ease-out; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .priority-high { border-left-color: var(--error); }
+  .priority-medium { border-left-color: #ffd680; }
+  .priority-low { border-left-color: var(--primary); }
+  
+  .color-swatch { 
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
+  }
+  .color-swatch:hover { 
+    transform: scale(1.05); 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .font-preview { 
+    transition: all 0.2s ease; 
+  }
+  .font-preview:hover { 
+    transform: scale(1.02); 
+  }
+  .stat-card { 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+  }
+  .stat-card:hover { 
+    transform: translateY(-4px); 
+    border-color: var(--primary-fixed-dim);
+    box-shadow: 0 12px 32px var(--primary-glow);
+  }
+  .style-bar { 
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+  }
+  .resource-card {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .resource-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-fixed-dim);
+  }
+  .prompt-card {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .prompt-card:hover {
+    background: var(--surface-container-high);
+  }
+  .guide-card {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .guide-card:hover {
+    background: var(--surface-container-high);
+  }
+  
+  @media (max-width: 1024px) {
+    .sidebar-sticky { position: static; max-height: none; }
+  }
+</style>
+
+<div class="pt-24 pb-xl" id="page-root" data-analysis-id="<%= analysis.id %>" data-status="<%= analysis.status %>">
+
+<% if (analysis.status === 'processing') { %>
+  <div class="w-full px-md">
+    <div class="glass-card p-xl rounded-2xl text-center">
+      <span class="material-symbols-outlined text-5xl text-secondary animate-pulse mb-md" style="font-variation-settings:'FILL'1;">neurology</span>
+      <h2 class="font-headline-sm text-headline-sm mb-sm">Analysis in Progress</h2>
+      <p class="font-body-md text-body-md text-on-surface-variant">Our AI is analyzing your design. This usually takes a few seconds.</p>
+      <div class="w-64 h-1 bg-white/5 mx-auto mt-lg rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-primary to-secondary animate-pulse w-2/3"></div>
+      </div>
+    </div>
+  </div>
+<% } else if (analysis.status === 'completed') { %>
+  <% 
+    const c = analysis.colors || {}; 
+    const f = analysis.fonts || []; 
+    const s = analysis.design_style || {}; 
+    const e = analysis.ai_explanation || ''; 
+    const t = analysis.typography || {}; 
+    const l = analysis.layout || {}; 
+    const a = analysis.accessibility || {}; 
+    const b = analysis.background || {}; 
+    const sh = analysis.shapes || []; 
+    const o = analysis.objects || []; 
+    const recs = analysis.resource_recommendations || {}; 
+    const prompts = analysis.prompts || {}; 
+    const guides = analysis.recreation_guides || {}; 
+    const score = analysis.confidence_score || 85;
+    const topStyle = Object.keys(s).length > 0 ? Object.entries(s).sort((a,b)=>b[1]-a[1])[0][0] : 'Modern';
+    const colorCount = c.extracted ? c.extracted.length : (c.palette ? Object.values(c.palette).flat().length : 0);
+  %>
+
+  <%
+    const analysisDuration = analysis.completed_at && analysis.created_at
+      ? Math.round((new Date(analysis.completed_at) - new Date(analysis.created_at)) / 1000)
+      : null;
+    const durationText = analysisDuration !== null
+      ? (analysisDuration < 60 ? `Analyzed in ${analysisDuration}s` : `Analyzed in ${Math.round(analysisDuration / 60)}m ${analysisDuration % 60}s`)
+      : '';
+  %>
+
+  <div class="dash-page-header" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px">
+    <div>
+      <a href="/history" class="flex items-center gap-xs font-body-md"><span class="material-symbols-outlined">arrow_back</span> Back to History</a>
+      <h1><%= analysis.title || 'Analysis Results' %></h1>
+      <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-secondary);margin-top:4px">
+        <span><%= new Date(analysis.created_at).toLocaleDateString() %></span>
+        <% if (durationText) { %>
+          <span style="color:var(--text-muted)">·</span>
+          <span><%= durationText %></span>
+        <% } %>
+        <span style="color:var(--text-muted)">·</span>
+        <span style="padding:2px 8px;border-radius:12px;background:rgba(124,58,237,0.1);color:var(--primary);font-weight:600;font-size:12px">Completed</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="shareAnalysis()" class="dash-btn-secondary" title="Share">
+        <span class="material-symbols-outlined" style="font-size:18px">share</span> Share
+      </button>
+      <button id="saveBtn" onclick="toggleSave()" class="dash-btn-secondary" title="Save">
+        <span class="material-symbols-outlined" style="font-size:18px" id="saveIcon">bookmark</span> <span id="saveLabel">Save</span>
+      </button>
+      <a href="/api/analysis/<%= analysis.id %>/export/pdf" class="dash-btn-primary" style="width:auto;padding:8px 16px">
+        <span class="material-symbols-outlined" style="font-size:18px">download</span> PDF
+      </a>
+    </div>
+  </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-md mb-lg">
+      <div class="stat-card glass-card p-md rounded-xl text-center">
+        <span class="material-symbols-outlined text-primary">text_fields</span>
+        <p class="font-display-xl text-xl text-on-surface mt-xs"><%= f.length %></p>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">Fonts</p>
+      </div>
+      <div class="stat-card glass-card p-md rounded-xl text-center">
+        <span class="material-symbols-outlined text-secondary">palette</span>
+        <p class="font-display-xl text-xl text-on-surface mt-xs"><%= colorCount || '—' %></p>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">Colors</p>
+      </div>
+      <div class="stat-card glass-card p-md rounded-xl text-center">
+        <span class="material-symbols-outlined text-tertiary">image</span>
+        <p class="font-display-xl text-xl text-on-surface mt-xs"><%= o.length || '—' %></p>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">Objects</p>
+      </div>
+      <div class="stat-card glass-card p-md rounded-xl text-center">
+        <span class="material-symbols-outlined text-primary">category</span>
+        <p class="font-display-xl text-xl text-on-surface mt-xs"><%= sh.length || '—' %></p>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">Shapes</p>
+      </div>
+      <div class="stat-card glass-card p-md rounded-xl text-center">
+        <span class="material-symbols-outlined text-secondary">auto_awesome</span>
+        <p class="font-display-xl text-xl text-on-surface mt-xs capitalize"><%= topStyle %></p>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">Style</p>
+      </div>
+      <div class="stat-card glass-card p-md rounded-xl text-center">
+        <span class="material-symbols-outlined text-tertiary">shield</span>
+        <p class="font-display-xl text-xl text-on-surface mt-xs"><%= a.contrast_ratio ? 'AA+' : '—' %></p>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">Access</p>
+      </div>
+      <div class="stat-card glass-card p-md rounded-xl text-center relative">
+        <span class="material-symbols-outlined text-primary">stars</span>
+        <div class="relative w-12 h-12 mx-auto mt-xs">
+          <svg class="w-12 h-12 -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="url(#sg)" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="<%= 264 - (264*score/100) %>" stroke-linecap="round"/>
+            <defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#0066FF"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+          </svg>
+          <span class="absolute inset-0 flex items-center justify-center font-display-xl text-sm hero-gradient-text"><%= score %></span>
+        </div>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">Score</p>
+      </div>
+    </div>
+
+    <!-- Design Preview Card -->
+    <div class="glass-card rounded-2xl p-lg mb-lg flex items-center gap-lg overflow-hidden">
+      <div class="w-20 h-20 shrink-0 rounded-xl bg-surface-container-high flex items-center justify-center overflow-hidden border border-white/5 relative">
+        <% if (analysis.upload_id) { %>
+          <img src="/api/uploads/<%= analysis.upload_id %>" alt="Original Design" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <span class="material-symbols-outlined text-3xl text-primary" style="display:none;">image</span>
+        <% } else { %>
+          <span class="material-symbols-outlined text-3xl text-primary">image</span>
+        <% } %>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-body-md text-body-md text-on-surface-variant text-sm">Original Design</p>
+        <p class="font-headline-sm text-headline-sm text-on-surface truncate"><%= analysis.title || 'Uploaded Design' %></p>
+      </div>
+      <a href="/upload" class="px-md py-sm border border-white/10 rounded-xl hover:bg-white/5 transition-all text-on-surface-variant flex items-center gap-xs shrink-0">
+        <span class="material-symbols-outlined text-[18px]">refresh</span> Reanalyze
+      </a>
+    </div>
+
+    <!-- Main Grid: Sidebar + Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-lg">
+      
+      <!-- Sidebar Navigation -->
+      <div class="lg:col-span-1">
+        <div class="glass-card rounded-2xl p-lg sidebar-sticky sticky top-24 max-h-[calc(100vh-120px)] overflow-y-auto">
+          <h2 class="font-headline-sm text-headline-sm mb-md text-on-surface">Analysis Sections</h2>
+          <div class="space-y-1">
+            <% const tabs = [
+              { id: 'fonts', label: 'Fonts', icon: 'text_fields' },
+              { id: 'colors', label: 'Colors', icon: 'palette' },
+              { id: 'typography', label: 'Typography', icon: 'format_align_left' },
+              { id: 'layout', label: 'Layout', icon: 'grid_view' },
+              { id: 'images', label: 'Images & Objects', icon: 'image' },
+              { id: 'style', label: 'Design Style', icon: 'auto_awesome' },
+              { id: 'accessibility', label: 'Accessibility', icon: 'shield' },
+              { id: 'mentor', label: 'AI Mentor', icon: 'school' }
+            ]; %>
+            <% tabs.forEach((t, i) => { %>
+              <button class="sidebar-btn w-full justify-start <%= i === 0 ? 'active' : '' %>" data-tab="<%= t.id %>">
+                <span class="material-symbols-outlined text-[20px]"><%= t.icon %></span>
+                <span><%= t.label %></span>
+              </button>
+            <% }) %>
+          </div>
+          
+          <!-- Quick Stats in Sidebar -->
+          <div class="mt-lg pt-lg border-t border-white/5">
+            <h3 class="font-label-sm text-label-sm text-on-surface-variant uppercase mb-sm">Quick Stats</h3>
+            <div class="space-y-sm">
+              <div class="flex justify-between text-sm">
+                <span class="text-on-surface-variant">Confidence</span>
+                <span class="font-semibold text-on-surface"><%= score %>%</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-on-surface-variant">Fonts Found</span>
+                <span class="font-semibold text-on-surface"><%= f.length %></span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-on-surface-variant">Colors Extracted</span>
+                <span class="font-semibold text-on-surface"><%= colorCount %></span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-on-surface-variant">Objects Detected</span>
+                <span class="font-semibold text-on-surface"><%= o.length %></span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-on-surface-variant">Shapes Found</span>
+                <span class="font-semibold text-on-surface"><%= sh.length %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="lg:col-span-3 space-y-lg">
+
+        <!-- Tab: Fonts -->
+        <div id="tab-fonts" class="tab-content active">
+          <div class="flex items-center justify-between mb-md">
+            <h2 class="font-headline-sm text-headline-sm">Typography Analysis</h2>
+            <span class="px-sm py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm"><%= f.length %> font<%= f.length !== 1 ? 's' : '' %> detected</span>
+          </div>
+          
+          <% if (f.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+              <% f.forEach((font, idx) => { %>
+                <div class="glass-card rounded-2xl p-lg font-preview">
+<div class="flex justify-between items-start mb-sm">
+  <div>
+    <p class="font-headline-sm text-headline-sm"><%= font.name || 'Unknown Font' %></p>
+    <p class="font-label-sm text-label-sm text-on-surface-variant"><%= [font.family, font.category, font.weight].filter(Boolean).join(' · ') %></p>
+  </div>
+  <div class="flex gap-sm">
+    <% if (font.confidence) { %>
+      <span class="px-md py-1 rounded-full bg-primary/10 text-primary font-bold text-sm">
+        <%= font.confidence %>% Match
+      </span>
+    <% } %>
+    <button onclick="copyText('<%= font.name.replace(/'/g, "\\'") %>')" class="px-sm py-1 rounded-lg bg-surface-container-high hover:bg-white/10 transition-colors" title="Copy font name" aria-label="Copy font name">
+      <span class="material-symbols-outlined text-[18px] text-on-surface-variant">content_copy</span>
+    </button>
+    <button onclick="copyText('--font-family: \\"<%= font.name.replace(/"/g, '\\"') %>\\";')" class="px-sm py-1 rounded-lg bg-surface-container-high hover:bg-white/10 transition-colors" title="Copy CSS variable" aria-label="Copy CSS variable">
+      <span class="material-symbols-outlined text-[18px] text-on-surface-variant">code</span>
+    </button>
+  </div>
+</div>
+                  
+                  <div class="mb-sm p-sm bg-surface-container-low rounded-xl">
+                    <p class="font-body-md text-body-md text-on-surface" style="font-family: '<%= font.name %>', sans-serif; font-weight: <%= font.weight %>; font-size: <%= font.size || '24px' %>;">
+                      The quick brown fox jumps over the lazy dog
+                    </p>
+                  </div>
+                  
+                  <div class="grid grid-cols-2 gap-sm mb-sm">
+                    <div class="p-sm bg-surface-container-low rounded-xl">
+                      <p class="font-label-sm text-label-sm text-on-surface-variant">Size</p>
+                      <p class="font-body-md text-body-md text-on-surface font-mono"><%= font.size || '—' %></p>
+                    </div>
+                    <div class="p-sm bg-surface-container-low rounded-xl">
+                      <p class="font-label-sm text-label-sm text-on-surface-variant">Weight</p>
+                      <p class="font-body-md text-body-md text-on-surface font-mono"><%= font.weight || '—' %></p>
+                    </div>
+                  </div>
+                  
+                  <% if (font.similar && font.similar.length) { %>
+                    <div class="pt-sm border-t border-white/5">
+                      <p class="font-label-sm text-label-sm text-primary mb-xs">Similar Fonts</p>
+                      <div class="flex flex-wrap gap-sm">
+                        <% font.similar.forEach(sim => { %>
+                          <span class="px-sm py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm"><%= sim %></span>
+                        <% }) %>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="glass-card rounded-2xl p-xl text-center">
+              <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-sm">text_fields</span>
+              <% if (analysis.fonts || analysis.typography || analysis.layout || analysis.design_style) { %>
+                <p class="font-body-md text-body-md text-on-surface-variant">No fonts detected in this design.</p>
+              <% } else { %>
+                <p class="font-body-md text-body-md text-on-surface-variant">AI analysis unavailable. <a href="/settings" class="text-primary">Configure API keys</a> for font detection.</p>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Tab: Colors -->
+        <div id="tab-colors" class="tab-content">
+          <div class="flex items-center justify-between mb-md">
+            <h2 class="font-headline-sm text-headline-sm">Color Palette</h2>
+            <span class="px-sm py-1 rounded-full bg-secondary/10 text-secondary font-label-sm text-label-sm"><%= colorCount %> colors extracted</span>
+          </div>
+          
+          <% const allColors = c.extracted || []; %>
+          <% if (allColors.length > 0) { %>
+            <div class="glass-card rounded-2xl p-lg mb-lg">
+              <h3 class="font-headline-sm text-headline-sm mb-md">Dominant Colors</h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+                <% allColors.slice(0, 8).forEach((col, idx) => { %>
+                  <div class="text-center group">
+                    <button onclick="copyColor('<%= col.hex %>')" class="color-swatch w-full h-28 rounded-xl border border-white/10 shadow-lg mb-2 relative overflow-hidden" style="background:<%= col.hex %>" title="Click to copy <%= col.hex %>">
+                      <span class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl">
+                        <span class="material-symbols-outlined text-white">content_copy</span>
+                      </span>
+                    </button>
+                    <p class="font-body-md text-body-md text-on-surface font-mono text-sm"><%= col.hex %></p>
+                    <% if (col.tailwind) { %><p class="font-label-sm text-label-sm text-primary text-xs"><%= col.tailwind %></p><% } %>
+                    <% if (col.percentage) { %><p class="font-label-sm text-label-sm text-on-surface-variant text-xs"><%= col.percentage %>%</p><% } %>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/50 text-[10px] font-mono"><%= col.rgb ? `rgb(${col.rgb.r},${col.rgb.g},${col.rgb.b})` : '' %></p>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-lg">
+              <h3 class="font-headline-sm text-headline-sm mb-md">Semantic Palette</h3>
+              <div class="space-y-lg">
+                <% ['background', 'primary', 'secondary', 'accent'].forEach(cat => { 
+                  const colors = c.palette?.[cat] || [];
+                  if (colors.length === 0) return; %>
+                  <div>
+                    <div class="flex items-center justify-between mb-sm">
+                      <p class="font-label-sm text-label-sm text-on-surface-variant capitalize"><%= cat %></p>
+                      <span class="font-label-sm text-label-sm text-primary font-semibold"><%= colors.length %> color<%= colors.length !== 1 ? 's' : '' %></span>
+                    </div>
+                    <div class="flex gap-sm flex-wrap">
+                      <% colors.forEach(h => { %>
+                        <button onclick="copyColor('<%= h %>')" class="w-12 h-12 rounded-xl border border-white/10 shadow-lg cursor-pointer hover:scale-110 transition-transform color-swatch" style="background:<%= h %>" title="Click to copy <%= h %>"></button>
+                      <% }) %>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+
+            <% if (c.palette) { %>
+              <div class="glass-card rounded-2xl p-lg mt-lg">
+                <h3 class="font-headline-sm text-headline-sm mb-md">Color Formats</h3>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="text-left text-on-surface-variant border-b border-white/5">
+                        <th class="pb-sm font-medium">Color</th>
+                        <th class="pb-sm font-medium">HEX</th>
+                        <th class="pb-sm font-medium">RGB</th>
+                        <th class="pb-sm font-medium">HSL</th>
+                        <th class="pb-sm font-medium">%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% allColors.forEach(col => { %>
+                        <tr class="border-b border-white/5">
+                          <td class="py-sm"><div class="w-8 h-8 rounded-lg" style="background:<%= col.hex %>"></div></td>
+                          <td class="py-sm font-mono font-medium"><%= col.hex %></td>
+                          <td class="py-sm font-mono text-on-surface-variant"><%= col.rgb ? `${col.rgb.r}, ${col.rgb.g}, ${col.rgb.b}` : '—' %></td>
+                          <td class="py-sm font-mono text-on-surface-variant"><%= col.hsl ? `${col.hsl.h}°, ${col.hsl.s}%, ${col.hsl.l}%` : '—' %></td>
+                          <td class="py-sm font-medium"><%= col.percentage || '—' %>%</td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% } %>
+
+            <% if (allColors.length > 0) { %>
+            <!-- CSS Variables Export -->
+            <div class="glass-card rounded-2xl p-lg mt-lg">
+              <div class="flex items-center justify-between mb-md">
+                <h3 class="font-headline-sm text-headline-sm">Export CSS Variables</h3>
+                <button onclick="copyCSSVariables()" class="px-md py-sm bg-primary-container text-on-primary-container rounded-xl hover:opacity-90 transition-all font-bold text-sm">
+                  <span class="material-symbols-outlined text-[18px]">code</span> Copy All CSS Variables
+                </button>
+              </div>
+              <div class="bg-surface-container-low rounded-xl p-md font-mono text-sm overflow-x-auto" id="cssVariablesOutput">
+                <pre id="cssVariablesCode"><%= generateCSSVariables(allColors) %></pre>
+              </div>
+            </div>
+            <% } %>
+
+          <% } else if (c.palette) { %>
+            <div class="space-y-md">
+              <% ['primary','secondary','accent','background'].forEach(cat => { 
+                if (c.palette[cat] && c.palette[cat].length) { %>
+                  <div class="glass-card rounded-2xl p-lg">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant capitalize mb-xs"><%= cat %></p>
+                    <div class="flex gap-xs"><% c.palette[cat].forEach(h => { %><button onclick="copyColor('<%= h %>')" class="w-12 h-12 rounded-xl border border-white/10 shadow-lg cursor-pointer hover:scale-110 transition-transform color-swatch" style="background:<%= h %>" title="Click to copy <%= h %>"></button><% }) %></div>
+                  </div>
+              <% } }) %>
+            </div>
+          <% } else { %>
+            <div class="glass-card rounded-2xl p-xl text-center">
+              <p class="text-on-surface-variant font-body-md text-center py-xl">Not Enough Confidence — We couldn't reliably extract colors.</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Tab: Typography -->
+        <div id="tab-typography" class="tab-content">
+          <div class="flex items-center justify-between mb-md">
+            <h2 class="font-headline-sm text-headline-sm">Typography Details</h2>
+            <span class="px-sm py-1 rounded-full bg-tertiary/10 text-tertiary font-label-sm text-label-sm"><%= Object.keys(t).length %> properties</span>
+          </div>
+          
+          <% if (Object.keys(t).length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+              <% Object.entries(t).forEach(([k, v]) => { %>
+                <div class="glass-card rounded-2xl p-lg">
+                  <p class="font-label-sm text-label-sm text-primary capitalize mb-xs"><%= k.replace(/_/g, ' ') %></p>
+                  <p class="font-body-md text-body-md text-on-surface leading-relaxed"><%= v %></p>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <div class="glass-card rounded-2xl p-xl text-center">
+              <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-sm">format_align_left</span>
+              <% if (analysis.fonts || analysis.typography || analysis.layout || analysis.design_style) { %>
+                <p class="font-body-md text-body-md text-on-surface-variant">No typography data detected.</p>
+              <% } else { %>
+                <p class="font-body-md text-body-md text-on-surface-variant">AI analysis unavailable. <a href="/settings" class="text-primary">Configure API keys</a> for typography analysis.</p>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Tab: Layout -->
+        <div id="tab-layout" class="tab-content">
+          <div class="flex items-center justify-between mb-md">
+            <h2 class="font-headline-sm text-headline-sm">Layout Structure</h2>
+            <span class="px-sm py-1 rounded-full bg-tertiary/10 text-tertiary font-label-sm text-label-sm"><%= Object.keys(l).length %> properties</span>
+          </div>
+          
+          <% if (Object.keys(l).length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-lg mb-lg">
+              <% Object.entries(l).forEach(([k, v]) => { %>
+                <div class="glass-card rounded-2xl p-lg">
+                  <p class="font-label-sm text-label-sm text-primary capitalize mb-xs"><%= k.replace(/_/g, ' ') %></p>
+                  <p class="font-body-md text-body-md text-on-surface leading-relaxed"><%= v %></p>
+                </div>
+              <% }) %>
+            </div>
+            
+            <div class="glass-card rounded-2xl p-lg text-center">
+              <p class="font-label-sm text-label-sm text-on-surface-variant mb-md">Layout Visualization</p>
+              <div class="max-w-md mx-auto h-40 rounded-xl bg-surface-container-high border border-white/5 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1/3 h-full border-r border-white/10"></div>
+                <div class="absolute top-0 left-1/3 w-1/3 h-full border-r border-white/10"></div>
+                <div class="absolute bottom-0 left-0 w-full h-1/4 border-t border-white/10 bg-white/5"></div>
+                <p class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-label-sm text-label-sm text-on-surface-variant/30">Grid Overlay (12-col)</p>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="glass-card rounded-2xl p-xl text-center">
+              <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-sm">grid_view</span>
+              <% if (analysis.fonts || analysis.typography || analysis.layout || analysis.design_style) { %>
+                <p class="font-body-md text-body-md text-on-surface-variant">No layout data detected.</p>
+              <% } else { %>
+                <p class="font-body-md text-body-md text-on-surface-variant">AI analysis unavailable. <a href="/settings" class="text-primary">Configure API keys</a> for layout analysis.</p>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Tab: Images & Objects -->
+        <div id="tab-images" class="tab-content">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+            
+            <% if (o.length > 0) { %>
+              <div class="glass-card rounded-2xl p-lg">
+                <h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+                  <span class="material-symbols-outlined text-primary">image</span> Detected Objects (<%= o.length %>)
+                </h3>
+                <div class="flex flex-wrap gap-sm">
+                  <% o.forEach(obj => { %>
+                    <span class="px-md py-sm rounded-xl bg-surface-container-high text-on-surface font-body-md text-sm flex items-center gap-xs">
+                      <span class="material-symbols-outlined text-primary text-[16px]">check_circle</span><%= obj %>
+                    </span>
+                  <% }) %>
+                </div>
+              </div>
+            <% } %>
+            
+            <% if (sh.length > 0) { %>
+              <div class="glass-card rounded-2xl p-lg">
+                <h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+                  <span class="material-symbols-outlined text-secondary">category</span> Shapes (<%= sh.length %>)
+                </h3>
+                <div class="flex flex-wrap gap-sm">
+                  <% sh.forEach(shp => { %>
+                    <span class="px-md py-sm rounded-xl bg-surface-container-high text-on-surface font-body-md text-sm flex items-center gap-xs">
+                      <span class="material-symbols-outlined text-secondary text-[16px]">check_circle</span><%= shp %>
+                    </span>
+                  <% }) %>
+                </div>
+              </div>
+            <% } %>
+            
+            <% if (Object.keys(b).length > 0) { %>
+              <div class="glass-card rounded-2xl p-lg md:col-span-2">
+                <h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+                  <span class="material-symbols-outlined text-tertiary">wallpaper</span> Background
+                </h3>
+                <p class="font-body-md text-body-md text-on-surface mb-sm"><%= [b.type, b.style].filter(Boolean).join(' · ') || '—' %></p>
+                <% if (b.colors && b.colors.length) { %>
+                  <div class="flex gap-xs mt-sm"><% b.colors.forEach(cl => { %><div class="w-8 h-8 rounded-lg border border-white/10" style="background:<%= cl %>"></div><% }) %></div>
+                <% } %>
+                <% if (b.effects && b.effects.length) { %>
+                  <div class="flex flex-wrap gap-sm mt-sm"><% b.effects.forEach(ef => { %><span class="px-sm py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm"><%= ef %></span><% }) %></div>
+                <% } %>
+              </div>
+            <% } %>
+            
+          </div>
+          
+          <% if (o.length === 0 && sh.length === 0 && Object.keys(b).length === 0) { %>
+            <div class="glass-card rounded-2xl p-xl text-center">
+              <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-sm">image</span>
+              <p class="font-body-md text-body-md text-on-surface-variant">Not Enough Confidence — We couldn't reliably identify images or objects.</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Tab: Design Style -->
+        <div id="tab-style" class="tab-content">
+          <div class="flex items-center justify-between mb-md">
+            <h2 class="font-headline-sm text-headline-sm">Design Style Confidence</h2>
+            <span class="px-sm py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">Top: <%= topStyle %> (<%= s[topStyle] || '—' %>%)</span>
+          </div>
+          
+          <% if (Object.keys(s).length > 0) { %>
+            <div class="glass-card rounded-2xl p-lg mb-lg">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                <% Object.entries(s).sort((a,b)=>b[1]-a[1]).forEach(([name, val], idx) => { %>
+                  <div class="<%= idx === 0 ? 'ring-2 ring-primary/30 rounded-xl p-md bg-primary/5' : '' %>">
+                    <div class="flex justify-between mb-xs">
+                      <span class="font-body-md text-body-md text-on-surface capitalize"><%= name.replace(/_/g, ' ') %></span>
+                      <span class="font-label-sm text-label-sm text-primary font-bold"><%= val %>%</span>
+                    </div>
+                    <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                      <div class="style-bar h-full rounded-full bg-gradient-to-r from-primary to-secondary" style="width:<%= val %>%"></div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface-variant mt-lg pt-lg border-t border-white/5 text-sm">
+                The dominant style <strong><%= topStyle %></strong> suggests a design focused on clean lines, purposeful whitespace, and a modern aesthetic that prioritizes clarity and user experience.
+              </p>
+            </div>
+          <% } else { %>
+            <div class="glass-card rounded-2xl p-xl text-center">
+              <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-sm">auto_awesome</span>
+              <p class="font-body-md text-body-md text-on-surface-variant">Style detection unavailable.</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Tab: Accessibility -->
+        <div id="tab-accessibility" class="tab-content">
+          <div class="flex items-center justify-between mb-md">
+            <h2 class="font-headline-sm text-headline-sm">Accessibility Report</h2>
+            <span class="px-sm py-1 rounded-full <%= (a.contrast_ratio || '').includes('AAA') ? 'bg-primary/10 text-primary' : 'bg-secondary/10 text-secondary' %> font-label-sm text-label-sm">
+              <%= (a.contrast_ratio || '').includes('AAA') ? 'WCAG AAA' : 'WCAG AA' %>
+            </span>
+          </div>
+          
+          <% if (Object.keys(a).length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-lg">
+              <div class="glass-card rounded-2xl p-lg text-center">
+                <span class="material-symbols-outlined text-3xl <%= (a.contrast_ratio || '').includes('AAA') ? 'text-primary' : 'text-secondary' %> mb-sm">
+                  <%= (a.contrast_ratio || '').includes('AAA') ? 'check_circle' : 'warning' %>
+                </span>
+                <p class="font-headline-sm text-headline-sm text-sm">Contrast Ratio</p>
+                <p class="font-body-md text-body-md text-on-surface-variant text-sm mt-xs"><%= a.contrast_ratio || '—' %></p>
+              </div>
+              <div class="glass-card rounded-2xl p-lg text-center">
+                <span class="material-symbols-outlined text-3xl text-primary mb-sm">visibility</span>
+                <p class="font-headline-sm text-headline-sm text-sm">Readability</p>
+                <p class="font-body-md text-body-md text-on-surface-variant text-sm mt-xs"><%= a.readability || '—' %></p>
+              </div>
+              <div class="glass-card rounded-2xl p-lg text-center">
+                <span class="material-symbols-outlined text-3xl text-tertiary mb-sm">format_size</span>
+                <p class="font-headline-sm text-headline-sm text-sm">Font Sizes</p>
+                <p class="font-body-md text-body-md text-on-surface-variant text-sm mt-xs"><%= a.font_sizes || '—' %></p>
+              </div>
+            </div>
+            
+            <% if (a.recommendations && a.recommendations.length) { %>
+              <div class="glass-card rounded-2xl p-lg mb-lg">
+                <h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+                  <span class="material-symbols-outlined text-primary">lightbulb</span> Recommendations
+                </h3>
+                <ul class="space-y-sm">
+                  <% a.recommendations.forEach(r => { %>
+                    <li class="flex items-start gap-sm p-sm bg-surface-container-high rounded-xl">
+                      <span class="material-symbols-outlined text-primary text-[18px] shrink-0">tips_and_updates</span>
+                      <span class="font-body-md text-body-md text-on-surface-variant text-sm"><%= r %></span>
+                    </li>
+                  <% }) %>
+                </ul>
+              </div>
+            <% } %>
+            
+            <% if (a.wcag_considerations && a.wcag_considerations.length) { %>
+              <div class="glass-card rounded-2xl p-lg">
+                <h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+                  <span class="material-symbols-outlined text-primary">gavel</span> WCAG Considerations
+                </h3>
+                <% a.wcag_considerations.forEach(w => { %>
+                  <p class="font-body-md text-body-md text-on-surface-variant text-sm flex items-center gap-xs">
+                    <span class="material-symbols-outlined text-on-surface-variant/50 text-[16px]">circle</span><%= w %>
+                  </p>
+                <% }) %>
+              </div>
+            <% } %>
+            
+          <% } else { %>
+            <div class="glass-card rounded-2xl p-xl text-center">
+              <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-sm">shield</span>
+              <p class="font-body-md text-body-md text-on-surface-variant">Accessibility analysis unavailable.</p>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Tab: AI Mentor -->
+        <div id="tab-mentor" class="tab-content">
+          
+          <% if (e) { %>
+            <div class="glass-card rounded-2xl p-lg mb-lg">
+              <div class="flex items-center gap-sm mb-md">
+                <span class="material-symbols-outlined text-primary text-2xl">school</span>
+                <h2 class="font-headline-sm text-headline-sm">AI Design Mentor</h2>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface-variant whitespace-pre-line leading-relaxed"><%= e %></p>
+            </div>
+          <% } else { %>
+            <div class="glass-card rounded-2xl p-xl text-center">
+              <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-sm">school</span>
+              <p class="font-body-md text-body-md text-on-surface-variant">AI analysis unavailable. <a href="/settings" class="text-primary">Configure API keys</a> for AI mentor insights.</p>
+            </div>
+          <% } %>
+          
+          <%
+            const suggestions = analysis.improvements || analysis.suggestions || [];
+            const hasSuggestions = suggestions.length > 0 || e;
+          %>
+          <div class="glass-card rounded-2xl p-lg mb-lg">
+            <h3 style="font-size:16px;font-weight:600;color:var(--on-surface);margin-bottom:16px;display:flex;align-items:center;gap:8px">
+              <span class="material-symbols-outlined" style="color:var(--primary)">auto_fix</span> Improvement Suggestions
+            </h3>
+            <% if (suggestions.length > 0) { %>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <% suggestions.forEach(function(sug) { %>
+                  <div style="padding:12px;border-radius:12px;background:var(--surface-container-high);border-left:4px solid <%= sug.priority === 'high' ? 'var(--error)' : sug.priority === 'medium' ? '#ffd680' : 'var(--primary)' %>">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                      <span style="padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;background:<%= sug.priority === 'high' ? 'rgba(239,68,68,0.2)' : sug.priority === 'medium' ? 'rgba(255,214,128,0.2)' : 'rgba(124,58,237,0.2)' %>;color:<%= sug.priority === 'high' ? 'var(--error)' : sug.priority === 'medium' ? '#ffd680' : 'var(--primary)' %>"><%= (sug.priority || 'low').toUpperCase() %></span>
+                    </div>
+                    <p style="font-size:13px;color:var(--text-secondary)"><%= sug.text || sug %></p>
+                  </div>
+                <% }) %>
+              </div>
+            <% } else if (e) { %>
+              <p style="font-size:14px;color:var(--text-secondary);line-height:1.6">Review the AI Design Mentor insights above for personalized improvement recommendations based on your design analysis.</p>
+            <% } else { %>
+              <p style="font-size:14px;color:var(--text-secondary)">AI analysis unavailable. <a href="/settings" style="color:var(--primary)">Configure API keys</a> for personalized suggestions.</p>
+            <% } %>
+          </div>
+
+          <% if (Object.keys(recs).length > 0) { %>
+            <div class="glass-card rounded-2xl p-lg mb-lg">
+              <h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+                <span class="material-symbols-outlined text-primary">recommend</span> Resource Recommendations
+              </h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+                <% Object.entries(recs).forEach(([cat, items]) => { 
+                  if (items && items.length) { %>
+                    <div class="resource-card p-md rounded-xl bg-surface-container-low hover:bg-surface-container-high">
+                      <p class="font-label-sm text-label-sm text-primary capitalize mb-xs"><%= cat.replace(/_/g, ' ') %></p>
+                      <% items.slice(0, 3).forEach(item => { %>
+                        <p class="font-body-md text-body-md text-on-surface-variant text-sm py-0.5">↳ <%= item %></p>
+                      <% }) %>
+                    </div>
+                  <% } 
+                }) %>
+              </div>
+            </div>
+          <% } %>
+
+          <% if (Object.keys(prompts).length > 0) { %>
+            <div class="glass-card rounded-2xl p-lg mb-lg">
+              <h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+                <span class="material-symbols-outlined text-primary">smart_toy</span> AI Prompts to Recreate Style
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                <% Object.entries(prompts).forEach(([tool, prompt]) => { %>
+                  <div class="prompt-card p-md bg-surface-container-low rounded-xl group relative">
+                    <p class="font-label-sm text-label-sm text-secondary uppercase mb-xs"><%= tool.replace(/_/g, ' ') %></p>
+                    <p class="font-body-md text-body-md text-on-surface-variant text-sm pr-10"><%= prompt %></p>
+                    <button onclick="copyText('<%= prompt.replace(/'/g, "\\'") %>')" class="absolute top-2 right-2 w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <span class="material-symbols-outlined text-[16px] text-on-surface-variant">content_copy</span>
+                    </button>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% } %>
+
+          <% if (Object.keys(guides).length > 0) { %>
+            <div class="glass-card rounded-2xl p-lg mb-lg">
+              <h3 class="font-headline-sm text-headline-sm mb-md flex items-center gap-xs">
+                <span class="material-symbols-outlined text-primary">draw</span> Recreation Guides
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+                <% Object.entries(guides).forEach(([tool, guide]) => { %>
+                  <div class="guide-card p-md bg-surface-container-low rounded-xl">
+                    <p class="font-label-sm text-label-sm text-primary uppercase mb-xs"><%= tool.replace(/_/g, ' ') %></p>
+                    <p class="font-body-md text-body-md text-on-surface-variant text-sm"><%= guide %></p>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% } %>
+
+          <!-- Download & Export -->
+          <div class="glass-card rounded-2xl p-lg flex flex-col sm:flex-row items-center justify-between gap-md">
+            <div class="flex items-center gap-sm">
+              <span class="material-symbols-outlined text-primary">download</span>
+              <div>
+                <p class="font-body-md text-body-md text-on-surface font-semibold">Download & Export</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant">PDF report · JSON data · Color palette</p>
+              </div>
+            </div>
+            <div class="flex gap-sm flex-wrap">
+              <a href="/api/analysis/<%= analysis.id %>/export/pdf" class="px-lg py-sm bg-primary-container text-on-primary-container rounded-xl hover:opacity-90 transition-all font-bold text-sm">PDF</a>
+              <a href="/api/analysis/<%= analysis.id %>/export/json" class="px-lg py-sm border border-white/10 rounded-xl hover:bg-white/5 transition-all font-bold text-sm">JSON</a>
+              <button onclick="window.print()" class="px-lg py-sm border border-white/10 rounded-xl hover:bg-white/5 transition-all font-bold text-sm">Print</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div class="dash-toast-container" id="toastContainer"></div>
+</div>
+
+<% } else { %>
+  <div style="max-width:600px;margin:80px auto;text-align:center;padding:32px;background:var(--card-bg);border:1px solid var(--nav-border);border-radius:16px">
+    <span class="material-symbols-outlined" style="font-size:56px;color:var(--text-muted);opacity:0.3;margin-bottom:16px;display:block">error_outline</span>
+    <h2 style="font-size:18px;font-weight:600;color:var(--on-surface);margin-bottom:8px">Analysis Failed</h2>
+    <p style="font-size:14px;color:var(--text-secondary)">Something went wrong during analysis. Please try again.</p>
+  </div>
+<% } %>
+
+<script src="/js/dashboard-v2.js"></script>
+<script src="/js/analysis.js"></script>
+<script>
+function copyCSSVariables() {
+  const code = document.getElementById('cssVariablesCode');
+  if (!code) return;
+  navigator.clipboard.writeText(code.textContent).then(() => {
+    showToast('CSS variables copied to clipboard');
+  }).catch(() => showToast('Failed to copy'));
+}
+
+function copyText(t) {
+  navigator.clipboard.writeText(t).then(() => showToast('Copied to clipboard')).catch(() => showToast('Failed to copy'));
+}
+
+function copyColor(hex) {
+  navigator.clipboard.writeText(hex).then(() => showToast('Copied ' + hex)).catch(() => showToast('Failed to copy'));
+}
+
+function shareAnalysis() {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url).then(() => showToast('Link copied to clipboard')).catch(() => showToast('Failed to copy'));
+}
+
+function showToast(msg) {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const t = document.createElement('div');
+  t.className = 'dash-toast';
+  t.innerHTML = '<span class="material-symbols-outlined" style="color:var(--primary);font-size:18px">check_circle</span><span style="font-size:13px;font-weight:500;color:var(--on-surface)">' + msg + '</span>';
+  container.appendChild(t);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(100px)';
+    t.style.transition = 'all 0.3s ease';
+    setTimeout(() => t.remove(), 300);
+  }, 2500);
+}
+</script>
+<%- include('partials/footer') %>

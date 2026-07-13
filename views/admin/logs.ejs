@@ -1,0 +1,34 @@
+<%- include('../partials/header') %>
+<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
+<h1 class="font-headline-lg text-headline-lg mb-xl">Activity Logs</h1>
+<div class="glass-card rounded-xl overflow-hidden">
+<table class="w-full">
+<thead><tr class="border-b border-white/5 bg-surface-container-high">
+<th class="text-left p-md font-label-sm text-label-sm text-on-surface-variant uppercase">User</th>
+<th class="text-left p-md font-label-sm text-label-sm text-on-surface-variant uppercase">Action</th>
+<th class="text-left p-md font-label-sm text-label-sm text-on-surface-variant uppercase">IP</th>
+<th class="text-left p-md font-label-sm text-label-sm text-on-surface-variant uppercase">Time</th>
+</tr></thead>
+<tbody class="divide-y divide-white/5">
+<% (logs || []).forEach(l => { %>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="p-md font-body-md text-on-surface"><%= l.user_name || 'Anonymous' %></td>
+<td class="p-md">
+<span class="px-sm py-1 rounded-full bg-primary/10 text-primary text-xs font-bold"><%= l.action %></span>
+</td>
+<td class="p-md font-label-sm text-label-sm text-on-surface-variant"><%= l.ip_address || '-' %></td>
+<td class="p-md font-label-sm text-label-sm text-on-surface-variant"><%= new Date(l.created_at).toLocaleString() %></td>
+</tr>
+<% }) %>
+</tbody>
+</table>
+</div>
+<% if (pages > 1) { %>
+<div class="flex justify-center gap-md mt-xl">
+<% if (page > 1) { %><a href="/admin/logs?page=<%= page-1 %>" class="px-md py-sm border border-white/10 rounded-lg hover:bg-white/5 transition-all">Previous</a><% } %>
+<span class="px-md py-sm text-on-surface-variant font-body-md">Page <%= page %> of <%= pages %></span>
+<% if (page < pages) { %><a href="/admin/logs?page=<%= page+1 %>" class="px-md py-sm border border-white/10 rounded-lg hover:bg-white/5 transition-all">Next</a><% } %>
+</div>
+<% } %>
+</div>
+<%- include('../partials/footer') %>

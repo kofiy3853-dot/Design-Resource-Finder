@@ -1,0 +1,220 @@
+<%- include('partials/header') %>
+
+<style>
+  .hero-section { position:relative; overflow:hidden; min-height:90vh; display:flex; align-items:center; background:var(--surface-container-low) url('/images/hero-bg.jpg') center/cover no-repeat; }
+  #shader-canvas-ANIMATION_3 {
+    position:absolute; inset:0; width:100%; height:100%; z-index:0;
+    pointer-events:none;
+  }
+  .hero-content { position:relative; z-index:1; }
+  .feature-icon { width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px; }
+  .pricing-card { position:relative; }
+  .pricing-card.popular::before {
+    content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+    background:var(--primary);color:var(--on-primary);padding:4px 18px;border-radius:20px;
+    font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;z-index:2;
+  }
+  .testimonial-card blockquote::before { content:'"';font-size:40px;line-height:0;position:relative;top:8px;margin-right:4px;color:var(--primary);opacity:0.5; }
+  @media(max-width:768px){.hero-section{min-height:80vh}}
+  @keyframes counter { from { opacity:0;transform:translateY(12px) } to { opacity:1;transform:translateY(0) } }
+  .counter-anim { animation: counter 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+</style>
+
+<!-- Hero -->
+<section class="hero-section">
+  <canvas id="shader-canvas-ANIMATION_3"></canvas>
+  <div class="hero-content max-w-container-max mx-auto px-md w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg items-center py-xl">
+      <div class="animate-fade-in">
+        <div class="inline-flex items-center gap-1 px-sm py-1 rounded-full mb-md" style="background:var(--primary-alpha-10);color:var(--primary);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.03em;">
+          <span class="material-symbols-outlined" style="font-size:16px">neurology</span>
+          <span>Powered by GPT-Visual AI</span>
+        </div>
+        <h1 class="font-display-xl text-display-xl md:text-[48px] leading-[1.1] font-bold mb-sm">
+          Deconstruct Any Design<br/>
+          <span class="hero-gradient-text">with AI Intelligence</span>
+        </h1>
+        <p class="font-body-lg text-body-lg md:text-[16px] text-on-surface-variant max-w-[520px] leading-relaxed mb-lg">
+          Upload any design asset to instantly identify fonts, colors, layouts, and styles. 
+          Learn the craft behind the visuals with AI-powered precision.
+        </p>
+        <div class="flex flex-wrap gap-sm mb-lg">
+          <a href="<%= user ? '/upload' : '/auth/register' %>" class="cta-glow inline-flex items-center gap-1 font-bold px-lg py-sm rounded-xl" style="background:var(--primary);color:var(--on-primary);">
+            <span>Start Your Analysis</span>
+            <span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>
+          </a>
+          <a href="/how-it-works" class="inline-flex items-center gap-1 font-bold px-lg py-sm rounded-xl" style="background:var(--surface-container-high);color:var(--on-surface);border:1px solid var(--card-border);">
+            <span class="material-symbols-outlined" style="font-size:18px">play_arrow</span>
+            <span>View Demo</span>
+          </a>
+</div>
+      </div>
+      <div class="hidden lg:block animate-fade-in" style="animation-delay:0.2s">
+        <div class="glass-card rounded-2xl overflow-hidden" style="transform:perspective(1000px) rotateY(-3deg)">
+          <div class="flex items-center gap-2 px-md py-sm" style="border-bottom:1px solid var(--card-border);">
+            <div class="flex gap-1"><span class="w-3 h-3 rounded-full" style="background:#EF4444"></span><span class="w-3 h-3 rounded-full" style="background:#F59E0B"></span><span class="w-3 h-3 rounded-full" style="background:#10B981"></span></div>
+            <span class="font-body-md text-body-md text-on-surface font-bold ml-1">Analysis Results</span>
+          </div>
+          <div class="p-md">
+            <div class="rounded-xl mb-md flex items-center justify-center" style="aspect-ratio:2/1;background:var(--surface-container-low);border:1px solid var(--card-border);">
+              <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted)">image</span>
+            </div>
+            <div class="grid grid-cols-2 gap-sm">
+              <div class="p-sm rounded-lg" style="background:var(--surface-container-low);border:1px solid var(--card-border);">
+                <div class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 mb-1"><span class="material-symbols-outlined" style="font-size:14px">text_fields</span> Fonts</div>
+                <div class="font-body-md text-body-md text-on-surface flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px;color:var(--success)">check</span> Poppins</div>
+                <div class="font-body-md text-body-md text-on-surface flex items-center gap-1"><span class="material-symbols-outlined" style="font-size:16px;color:var(--success)">check</span> Montserrat</div>
+              </div>
+              <div class="p-sm rounded-lg" style="background:var(--surface-container-low);border:1px solid var(--card-border);">
+                <div class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1 mb-1"><span class="material-symbols-outlined" style="font-size:14px">palette</span> Colors</div>
+                <div class="font-body-md text-body-md text-on-surface flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:#7C3AED"></span> #7C3AED</div>
+                <div class="font-body-md text-body-md text-on-surface flex items-center gap-1"><span class="w-3 h-3 rounded" style="background:#8B5CF6"></span> #8B5CF6</div>
+              </div>
+              <div class="p-sm rounded-lg" style="background:var(--surface-container-low);border:1px solid var(--card-border);">
+                <div class="font-label-sm text-label-sm text-on-surface-variant mb-1"><span class="material-symbols-outlined" style="font-size:14px">style</span> Style</div>
+                <div class="font-body-md text-body-md text-on-surface">Modern Minimalist</div>
+              </div>
+              <div class="p-sm rounded-lg" style="background:var(--surface-container-low);border:1px solid var(--card-border);">
+                <div class="font-label-sm text-label-sm text-on-surface-variant mb-1"><span class="material-symbols-outlined" style="font-size:14px">speed</span> Score</div>
+                <div class="font-body-md text-body-md" style="color:var(--success);font-weight:700">94% Accuracy</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="py-xl px-md">
+  <div class="max-w-container-max mx-auto">
+    <div class="text-center mb-lg max-w-[600px] mx-auto">
+      <h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">Sophisticated Design Intelligence</h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant">Beyond simple detection — we provide the architectural blueprint of every visual asset.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+      <% const features = [
+        { icon: 'detection_and_zone', title: 'AI-Powered Detection', desc: 'Identify font families, hex codes, and spacing rhythms with 99.8% precision across any image or PDF.' },
+        { icon: 'school', title: 'Educational Insights', desc: "Don't just see the what. Understand the why with deep dives into design theory and composition principles." },
+        { icon: 'recommend', title: 'Resource Recommendations', desc: 'Get instant links to download assets or find high-quality alternatives within your existing design libraries.' },
+        { icon: 'speed', title: 'Lightning Fast', desc: 'Get complete design analysis in under 2 seconds. No waiting, instant insights.' },
+        { icon: 'shield', title: '100% Private', desc: 'Your designs are yours alone. No data selling, no tracking, complete privacy.' },
+        { icon: 'emoji_events', title: 'Gamification', desc: 'Earn achievements, build streaks, and track your design mastery journey.' },
+      ] %>
+      <% features.forEach(f => { %>
+        <div class="glass-card p-lg rounded-xl">
+          <div class="feature-icon mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);">
+            <span class="material-symbols-outlined"><%= f.icon %></span>
+          </div>
+          <h3 class="font-headline-lg text-headline-lg font-bold mb-xs"><%= f.title %></h3>
+          <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed"><%= f.desc %></p>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" class="py-xl px-md" style="background:var(--surface-container-low);">
+  <div class="max-w-container-max mx-auto">
+    <div class="text-center mb-lg max-w-[500px] mx-auto">
+      <h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">Three Steps to Design Mastery</h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant">From upload to insight in under 2 seconds.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+      <% const steps = [
+        { num: '01', icon: 'upload_file', title: 'Upload', desc: 'Drop any screenshot, Figma link, or vector file into the analysis engine.' },
+        { num: '02', icon: 'analytics', title: 'Analyze', desc: 'Our AI neural networks scan the structure, extracting every design token in seconds.' },
+        { num: '03', icon: 'psychology', title: 'Learn', desc: 'Receive a comprehensive report with downloadable assets and style guides.' },
+      ] %>
+      <% steps.forEach(s => { %>
+        <div class="text-center">
+          <div class="step-number font-display-xl text-[64px] leading-none mb-sm" style="color:var(--card-border);"><%= s.num %></div>
+          <div class="feature-icon mx-auto mb-sm" style="background:var(--primary-alpha-10);color:var(--primary);width:56px;height:56px;border-radius:16px;font-size:26px;">
+            <span class="material-symbols-outlined"><%= s.icon %></span>
+          </div>
+          <h4 class="font-headline-lg text-headline-lg font-bold mb-xs"><%= s.title %></h4>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[280px] mx-auto"><%= s.desc %></p>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials" class="py-xl px-md">
+  <div class="max-w-container-max mx-auto">
+    <div class="text-center mb-lg max-w-[500px] mx-auto">
+      <h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">Loved by Designers & Teams</h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant">See what designers are saying about Design Resource Finder.</p>
+    </div>
+    <div class="glass-card p-lg rounded-2xl text-center">
+      <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-sm" style="font-variation-settings:'FILL'1;">format_quote</span>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-md">No testimonials yet. Be the first to analyze a design and share your experience!</p>
+      <a href="/upload" class="cta-glow inline-flex items-center gap-1 font-bold px-xl py-sm rounded-xl" style="background:var(--primary);color:var(--on-primary);">
+        <span>Start Your First Analysis</span>
+        <span class="material-symbols-outlined" style="font-size:20px">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing" class="py-xl px-md" style="background:var(--surface-container-low);">
+  <div class="max-w-container-max mx-auto">
+    <div class="text-center mb-lg max-w-[500px] mx-auto">
+      <h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">Simple, Scalable Pricing</h2>
+      <p class="font-body-lg text-body-lg text-on-surface-variant">Choose the plan that fits your creative workflow.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-md items-start max-w-[1000px] mx-auto">
+      <div class="glass-card p-lg rounded-xl pricing-card flex flex-col">
+        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-xs">Hobby</p>
+        <p class="font-display-xl text-[36px] font-bold mb-sm">$0 <span class="font-body-lg text-body-lg text-on-surface-variant font-normal">/forever</span></p>
+        <ul class="flex-1 space-y-sm mb-lg">
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> 5 analyses per month</li>
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Basic font identification</li>
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Community support</li>
+        </ul>
+        <a href="/auth/register" class="block text-center font-bold px-lg py-sm rounded-xl" style="background:var(--surface-container-high);color:var(--on-surface);border:1px solid var(--card-border);">Get Started</a>
+      </div>
+      <div class="glass-card p-lg rounded-xl pricing-card popular flex flex-col" style="border-color:var(--primary);">
+        <p class="font-label-sm text-label-sm uppercase tracking-widest mb-xs" style="color:var(--primary)">Professional</p>
+        <p class="font-display-xl text-[36px] font-bold mb-sm">$29 <span class="font-body-lg text-body-lg text-on-surface-variant font-normal">/month</span></p>
+        <ul class="flex-1 space-y-sm mb-lg">
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Unlimited analyses</li>
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Batch processing</li>
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Export to Figma/Sketch</li>
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> AI Style Guide Generation</li>
+        </ul>
+        <a href="/auth/register" class="block text-center font-bold px-lg py-sm rounded-xl cta-glow" style="background:var(--primary);color:var(--on-primary);">Start Pro Trial</a>
+      </div>
+      <div class="glass-card p-lg rounded-xl pricing-card flex flex-col">
+        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-xs">Team</p>
+        <p class="font-display-xl text-[36px] font-bold mb-sm">$99 <span class="font-body-lg text-body-lg text-on-surface-variant font-normal">/month</span></p>
+        <ul class="flex-1 space-y-sm mb-lg">
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Up to 10 users</li>
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Shared asset library</li>
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Advanced permissions</li>
+          <li class="flex items-center gap-1 font-body-lg text-body-lg"><span class="material-symbols-outlined" style="color:var(--success);font-size:18px">check_circle</span> Account manager</li>
+        </ul>
+        <a href="/auth/register" class="block text-center font-bold px-lg py-sm rounded-xl" style="background:var(--surface-container-high);color:var(--on-surface);border:1px solid var(--card-border);">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-xl px-md">
+  <div class="max-w-container-max mx-auto glass-card rounded-2xl p-lg md:p-xl text-center" style="background:linear-gradient(135deg,var(--primary-alpha-10),var(--surface-container-high));border-color:var(--primary-fixed-dim);">
+    <h2 class="font-display-xl text-display-xl md:text-[32px] font-bold mb-sm">Ready to Unlock Design Intelligence?</h2>
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[500px] mx-auto mb-lg">Join thousands of designers who use AI to understand and recreate world-class designs.</p>
+    <a href="<%= user ? '/upload' : '/auth/register' %>" class="cta-glow inline-flex items-center gap-1 font-bold px-xl py-sm rounded-xl" style="background:var(--primary);color:var(--on-primary);font-size:16px;">
+      <span><%= user ? 'Upload Your First Design' : 'Get Started Free' %></span>
+      <span class="material-symbols-outlined" style="font-size:20px">arrow_forward</span>
+    </a>
+  </div>
+</section>
+
+<script src="/js/index.js"></script>
+<%- include('partials/footer') %>

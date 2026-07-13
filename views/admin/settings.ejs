@@ -1,0 +1,19 @@
+<%- include('../partials/header') %>
+<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
+<h1 class="font-headline-lg text-headline-lg mb-xl">Site Settings</h1>
+<div class="max-w-2xl glass-card p-lg rounded-xl">
+<% if (settings && settings.length > 0) { %>
+<div class="space-y-md">
+<% settings.forEach(s => { %>
+<div class="p-md bg-surface-container-high rounded-lg">
+<p class="font-body-md text-body-md text-on-surface"><%= s.setting_key %></p>
+<p class="font-label-sm text-label-sm text-on-surface-variant"><%= JSON.stringify(s.setting_value) %></p>
+</div>
+<% }) %>
+</div>
+<% } else { %>
+<p class="font-body-md text-body-md text-on-surface-variant">No custom settings configured. Settings are managed via the .env file and database defaults.</p>
+<% } %>
+</div>
+</div>
+<%- include('../partials/footer') %>

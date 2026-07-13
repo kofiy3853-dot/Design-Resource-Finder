@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+<div class="min-h-screen flex items-center justify-center px-md pt-24 pb-xl">
+<div class="w-full max-w-md glass-card p-xl rounded-xl">
+<div class="text-center mb-lg">
+<div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-md">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg mb-xs">Create Account</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Start analyzing designs with AI</p>
+</div>
+<form id="registerForm" class="space-y-md">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface mb-xs block">Full Name</label>
+<input name="name" type="text" required class="w-full bg-surface-container-high border border-white/5 rounded-lg px-md py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary" placeholder="John Doe"/>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface mb-xs block">Email</label>
+<input name="email" type="email" required class="w-full bg-surface-container-high border border-white/5 rounded-lg px-md py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary" placeholder="you@example.com"/>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface mb-xs block">Password</label>
+<input name="password" type="password" required minlength="8" class="w-full bg-surface-container-high border border-white/5 rounded-lg px-md py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Min. 8 characters"/>
+</div>
+<button type="submit" class="w-full py-3 bg-primary-container text-on-primary-container rounded-lg font-bold hover:opacity-90 transition-all cta-glow flex items-center justify-center gap-xs">
+<span>Create Account</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<p class="text-center font-body-md text-body-md text-on-surface-variant mt-md">
+Already have an account? <a href="/auth/login" class="text-primary hover:underline">Sign in</a>
+</p>
+</form>
+</div>
+</div>
+<script src="/js/register.js"></script>
+<%- include('partials/footer') %>

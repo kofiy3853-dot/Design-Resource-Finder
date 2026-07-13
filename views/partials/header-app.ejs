@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= typeof title !== "undefined" ? title : "Design Resource Finder" %></title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1&display=swap"/>
+<link rel="stylesheet" href="/css/tailwind.css"/>
+<link rel="stylesheet" href="/css/modern.css"/>
+<link rel="stylesheet" href="/css/dashboard.css"/>
+<script src="/js/theme.js" defer></script>
+</head>
+<body>
+<!-- App Navbar -->
+<nav class="app-navbar fixed top-0 w-full z-50" style="height: var(--header-height); background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--nav-border);">
+  <div class="flex items-center justify-between h-full px-md">
+    <!-- Left: Logo + Sidebar Toggle -->
+    <div class="flex items-center gap-xs">
+      <button id="sidebarToggle" data-sidebar-toggle class="app-sidebar-toggle w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--primary-alpha-20); color: var(--primary);" aria-label="Toggle sidebar" aria-expanded="false">
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
+      <a href="/dashboard" class="flex items-center gap-2 no-underline ml-2">
+        <div style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--primary), #8B5CF6); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px;">
+          <span class="material-symbols-outlined" style="font-size: 18px; font-variation-settings: 'FILL' 1;">auto_awesome</span>
+        </div>
+        <span class="font-headline-sm text-headline-sm font-bold" style="color: var(--on-surface);">Design Resource Finder</span>
+      </a>
+    </div>
+
+    <!-- Center: Search (desktop only) -->
+    <div class="hidden lg:block flex-1 max-w-md mx-8">
+      <a href="/search" class="w-full flex items-center gap-2 px-4 py-2 rounded-xl" style="background: var(--primary-alpha-20); color: var(--primary); transition: all 0.2s;" onmouseenter="this.style.background='var(--primary-alpha-30)'" onmouseleave="this.style.background='var(--primary-alpha-20)'">
+        <span class="material-symbols-outlined text-[18px]">search</span>
+        <span class="font-body-md text-body-md text-on-surface-variant">Search designs, fonts, colors...</span>
+      </a>
+    </div>
+
+    <!-- Right: Actions -->
+    <div class="flex items-center gap-2">
+      <% if (user) { %>
+      <a href="/dashboard" class="w-10 h-10 rounded-full flex items-center justify-center" style="background: var(--primary-alpha-20); color: var(--primary);" aria-label="Notifications">
+        <span class="material-symbols-outlined text-[18px]">notifications</span>
+      </a>
+      <% } %>
+      <a href="/search" class="w-10 h-10 rounded-full flex items-center justify-center" style="background: var(--primary-alpha-20); color: var(--primary);" aria-label="Search">
+        <span class="material-symbols-outlined text-[18px]">search</span>
+      </a>
+      <button id="themeToggle" class="w-10 h-10 rounded-full flex items-center justify-center" style="background: var(--primary-alpha-20); color: var(--primary);" aria-label="Toggle theme" data-theme-toggle>
+        <span class="material-symbols-outlined text-[18px]" data-theme-icon>dark_mode</span>
+      </button>
+      <% if (user) { %>
+      <div class="relative group ml-2">
+        <a href="/profile" class="w-10 h-10 rounded-full flex items-center justify-center font-bold" style="background: linear-gradient(135deg, var(--primary), #8B5CF6); color: #fff; font-size: 14px;">
+          <%= user.name ? user.name.charAt(0).toUpperCase() : "U" %>
+        </a>
+        <div class="absolute right-0 top-full mt-2 w-56 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50" style="background: var(--card-bg); border: 1px solid var(--nav-border); box-shadow: var(--shadow-lg);">
+          <div class="p-sm" style="border-bottom: 1px solid var(--nav-border);">
+            <p class="font-body-md text-body-md" style="color: var(--on-surface); font-weight: 600; truncate"><%= user.name %></p>
+            <p class="font-label-sm text-label-sm" style="color: var(--text-secondary); truncate"><%= user.email %></p>
+          </div>
+          <div class="p-sm">
+            <a href="/dashboard" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color: var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)'; this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent'; this.style.color='var(--text-secondary)'">Dashboard</a>
+            <a href="/profile" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color: var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)'; this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent'; this.style.color='var(--text-secondary)'">Profile</a>
+            <a href="/settings" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color: var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)'; this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent'; this.style.color='var(--text-secondary)'">Settings</a>
+            <% if (user.role === "admin") { %>
+            <a href="/admin" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color: var(--primary); font-weight: 600;">Admin Panel</a>
+            <% } %>
+          </div>
+          <div class="p-sm" style="border-top: 1px solid var(--nav-border);">
+            <a href="/auth/logout" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color: #EF4444;" onmouseenter="this.style.background='rgba(239,68,68,0.1)'" onmouseleave="this.style.background='transparent'">Sign Out</a>
+          </div>
+        </div>
+      </div>
+      <% } else { %>
+      <a href="/auth/login" class="font-body-md" style="color: var(--text-secondary); font-weight: 500; padding: 6px 14px; border-radius: 10px; transition: all 0.2s;" onmouseenter="this.style.color='var(--primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Sign In</a>
+      <a href="/auth/register" class="font-bold px-4 py-2 rounded-xl transition-all active:scale-95 duration-200 ml-2" style="background: linear-gradient(135deg, var(--primary), #8B5CF6); color: #fff;" onmouseenter="this.style.boxShadow='0 4px 16px rgba(124,58,237,0.3)'" onmouseleave="this.style.boxShadow='none'">Get Started</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

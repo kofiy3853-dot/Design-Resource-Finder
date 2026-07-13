@@ -1,0 +1,318 @@
+<%- include('partials/header-app') %>
+<div class="dash-page">
+  <div class="dash-sidebar-overlay" id="sidebarOverlay"></div>
+
+  <div class="dash-layout">
+    <aside class="dash-sidebar" id="sidebar">
+      <div class="dash-sidebar-header">
+        <div class="dash-sidebar-logo"><span class="material-symbols-outlined">auto_awesome</span></div>
+        <div class="dash-sidebar-brand">
+          <h3>Design Resource Finder</h3>
+          <p>Dashboard</p>
+        </div>
+      </div>
+
+      <nav class="dash-sidebar-nav">
+        <ul>
+          <li class="dash-nav-label">Main</li>
+          <li><a class="dash-nav-item active" href="/dashboard"><span class="material-symbols-outlined">dashboard</span> Dashboard</a></li>
+          <li><a class="dash-nav-item" href="/upload"><span class="material-symbols-outlined">upload_file</span> Upload Design</a></li>
+          <li><a class="dash-nav-item" href="/history"><span class="material-symbols-outlined">history</span> History</a></li>
+          <li><a class="dash-nav-item" href="/projects"><span class="material-symbols-outlined">folder</span> Projects</a></li>
+          <li><a class="dash-nav-item" href="/favorites"><span class="material-symbols-outlined">favorite</span> Favorites</a></li>
+          <li><a class="dash-nav-item" href="/bg-generator"><span class="material-symbols-outlined">auto_fix_high</span> AI Background Generator</a></li>
+
+          <li class="dash-nav-label">Resources</li>
+          <li><a class="dash-nav-item" href="/resources"><span class="material-symbols-outlined">grid_view</span> Resources</a></li>
+          <li><a class="dash-nav-item" href="/pricing"><span class="material-symbols-outlined">sell</span> Pricing</a></li>
+          <li><a class="dash-nav-item" href="/settings"><span class="material-symbols-outlined">settings</span> Settings</a></li>
+          <li><a class="dash-nav-item" href="/help"><span class="material-symbols-outlined">help</span> Help & Support</a></li>
+        </ul>
+      </nav>
+
+      <div class="dash-sidebar-footer">
+        <div class="dash-upgrade-card">
+          <h4>Upgrade to Pro</h4>
+          <p>Unlock unlimited analyses</p>
+          <a href="/pricing" class="dash-upgrade-btn dash-ripple">Upgrade Now</a>
+        </div>
+        <div class="dash-user-card">
+          <div class="dash-avatar"><%= user?.name ? user.name.charAt(0).toUpperCase() : 'U' %></div>
+          <div class="dash-user-info">
+            <h4><%= user?.name || 'User' %></h4>
+            <p><%= user?.email || 'user@example.com' %></p>
+          </div>
+          <span class="material-symbols-outlined dash-user-toggle" id="userMenuToggle">expand_more</span>
+          <div class="dash-user-dropdown" id="userDropdown">
+            <a href="/profile">Profile</a>
+            <a href="/settings">Settings</a>
+            <a href="/achievements">Achievements</a>
+            <a href="/auth/logout" class="dash-logout">Sign Out</a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <div class="dash-content">
+        <div class="dash-page-header">
+          <a href="/" class="flex items-center gap-xs font-body-md"><span class="material-symbols-outlined">arrow_back</span> Back to Home</a>
+          <h1>Dashboard</h1>
+          <p>Welcome back, <%= user?.name || 'User' %>. Here's your design analysis overview.</p>
+        </div>
+
+        <div class="dash-stats" id="dashStats">
+          <div class="dash-stat-card">
+            <div class="dash-stat-header">
+              <div class="dash-stat-icon"><span class="material-symbols-outlined">text_fields</span></div>
+              <a href="/history" class="dash-stat-link">View All</a>
+            </div>
+            <div class="dash-stat-number" data-target="<%= fontsFound || 0 %>">0</div>
+            <div class="dash-stat-label">Fonts Found</div>
+            <div class="dash-stat-sub"><%= recentAnalysis ? 'From latest analysis' : 'No recent analysis' %></div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dash-stat-header">
+              <div class="dash-stat-icon"><span class="material-symbols-outlined">palette</span></div>
+              <a href="/history" class="dash-stat-link">View All</a>
+            </div>
+            <div class="dash-stat-number" data-target="<%= colorsExtracted || 0 %>">0</div>
+            <div class="dash-stat-label">Colors Extracted</div>
+            <div class="dash-stat-sub"><%= recentAnalysis ? 'From latest analysis' : 'No recent analysis' %></div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dash-stat-header">
+              <div class="dash-stat-icon"><span class="material-symbols-outlined">inventory_2</span></div>
+              <a href="/resources" class="dash-stat-link">Browse</a>
+            </div>
+            <div class="dash-stat-number" data-target="<%= resourcesFound || 0 %>">0</div>
+            <div class="dash-stat-label">Resources Found</div>
+            <div class="dash-stat-sub"><%= recentAnalysis ? 'From latest analysis' : 'No recent analysis' %></div>
+          </div>
+          <div class="dash-stat-card">
+            <div class="dash-stat-header">
+              <div class="dash-stat-icon"><span class="material-symbols-outlined">checklist</span></div>
+              <a href="/history" class="dash-stat-link">Details</a>
+            </div>
+            <div class="dash-stat-score">
+              <div class="dash-stat-score-circle">
+                <span class="dash-stat-score-value"><%= avgMatchScore %>%</span>
+              </div>
+              <div class="dash-stat-label">Match Score</div>
+              <div class="dash-stat-sub" style="color:var(--success)"><%= avgMatchScore >= 90 ? 'High Confidence' : avgMatchScore >= 70 ? 'Good Match' : avgMatchScore > 0 ? 'Low Confidence' : 'No analysis yet' %></div>
+            </div>
+          </div>
+        </div>
+
+        <% if (!recentAnalysis) { %>
+        <!-- Welcome / Guided Tour Card -->
+        <div class="dash-card dash-welcome-card">
+          <div class="dash-welcome-inner">
+            <div class="dash-welcome-icon">
+              <span class="material-symbols-outlined">auto_awesome</span>
+            </div>
+            <div class="dash-welcome-content">
+              <h3>Welcome to Design Resource Finder!</h3>
+              <p>Upload a design to get AI-powered analysis of fonts, colors, layout, and more. We'll extract color palettes, identify fonts, and provide recreation guides.</p>
+              <div class="dash-welcome-actions">
+                <a href="/upload" class="dash-btn-primary dash-ripple">
+                  <span class="material-symbols-outlined">upload_file</span> Upload First Design
+                </a>
+                <a href="/how-it-works" class="dash-btn-secondary">
+                  <span class="material-symbols-outlined">help</span> Learn How It Works
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="dash-grid-2">
+          <div>
+            <div class="dash-card" style="margin-bottom:20px">
+              <div class="dash-card-header"><h3 class="dash-card-title">Upload Design</h3></div>
+              <div class="dash-upload-area" id="uploadArea">
+                <div class="dash-upload-icon"><span class="material-symbols-outlined" style="font-size:48px">cloud_upload</span></div>
+                <h4>Drop your design here</h4>
+                <p>or click to browse files</p>
+                <div class="dash-upload-formats">
+                  <span class="dash-upload-format">JPG</span>
+                  <span class="dash-upload-format">PNG</span>
+                  <span class="dash-upload-format">WEBP</span>
+                  <span class="dash-upload-format">PDF</span>
+                  <span class="dash-upload-format">Max 25MB</span>
+                </div>
+                <input type="file" id="fileInput" accept="image/*,.pdf" style="display:none"/>
+                <div class="dash-upload-preview" id="uploadPreview">
+                  <img id="previewImage" src="" alt="Preview"/>
+                  <div id="pdfIcon" style="display:none;font-size:32px;color:var(--primary)"><span class="material-symbols-outlined" style="font-size:32px">description</span></div>
+                  <div class="dash-upload-preview-info">
+                    <h4 id="previewName" class="dash-truncate" title="">filename.png</h4>
+                    <p id="previewSize">2.4 MB</p>
+                  </div>
+                  <button class="dash-upload-delete" id="deleteUpload" aria-label="Delete uploaded file"><span class="material-symbols-outlined">close</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header"><h3 class="dash-card-title">Quick Analysis</h3></div>
+              <% if (recentAnalysis) { %>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px"><%= fontsFound + colorsExtracted + resourcesFound %> items detected</p>
+                <div class="dash-analysis-checklist">
+                  <div class="dash-check-item"><span class="check-icon done material-symbols-outlined">check</span> <%= fontsFound %> Font<%= fontsFound !== 1 ? 's' : '' %> detected</div>
+                  <div class="dash-check-item"><span class="check-icon done material-symbols-outlined">check</span> <%= colorsExtracted %> Color<%= colorsExtracted !== 1 ? 's' : '' %> extracted</div>
+                  <div class="dash-check-item"><span class="check-icon done material-symbols-outlined">check</span> <%= resourcesFound %> Resource<%= resourcesFound !== 1 ? 's' : '' %> found</div>
+                  <div class="dash-check-item"><span class="check-icon done material-symbols-outlined">check</span> Text blocks identified</div>
+                  <div class="dash-check-item"><span class="check-icon done material-symbols-outlined">check</span> Objects detected</div>
+                </div>
+                <a href="/analysis/<%= recentAnalysis.id %>" class="dash-btn-primary dash-ripple" style="margin-top:8px;display:inline-flex"><span class="material-symbols-outlined">refresh</span> View Full Analysis</a>
+              <% } else { %>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Upload a design to see quick analysis</p>
+                <div class="dash-analysis-checklist">
+                  <div class="dash-check-item"><span class="check-icon pending material-symbols-outlined">schedule</span> Fonts detection</div>
+                  <div class="dash-check-item"><span class="check-icon pending material-symbols-outlined">schedule</span> Color extraction</div>
+                  <div class="dash-check-item"><span class="check-icon pending material-symbols-outlined">schedule</span> Resource matching</div>
+                  <div class="dash-check-item"><span class="check-icon pending material-symbols-outlined">schedule</span> Text identification</div>
+                  <div class="dash-check-item"><span class="check-icon pending material-symbols-outlined">schedule</span> Object detection</div>
+                </div>
+                <a href="/upload" class="dash-btn-primary dash-ripple" style="margin-top:8px;display:inline-flex"><span class="material-symbols-outlined">upload_file</span> Upload Design</a>
+              <% } %>
+            </div>
+          </div>
+
+          <div>
+            <div class="dash-card" style="margin-bottom:20px">
+              <div class="dash-card-header"><h3 class="dash-card-title">Detected Fonts</h3><a href="/history" class="dash-card-link">View All</a></div>
+              <% if (fonts && fonts.length > 0) { %>
+                <div class="dash-font-list">
+                  <% fonts.forEach(function(font) { %>
+                    <div class="dash-font-item">
+                      <div class="dash-font-preview" style="font-family:'<%= font.name %>',sans-serif;font-weight:<%= font.weight %>">Aa</div>
+                      <div class="dash-font-info">
+                        <h4 title="<%= font.name %> <%= font.weight !== '400' ? font.weight : '' %>"><%= font.name %> <%= font.weight !== '400' ? font.weight : '' %></h4>
+                        <p>The quick brown fox jumps over the lazy dog</p>
+                      </div>
+                      <span class="dash-badge dash-badge-match"><%= font.confidence %>% Match</span>
+                      <span class="dash-badge dash-badge-free">Free</span>
+                      <span class="material-symbols-outlined" style="color:var(--text-muted);font-size:18px">chevron_right</span>
+                    </div>
+                  <% }) %>
+                </div>
+                <button class="dash-btn-secondary" style="width:100%;margin-top:12px;justify-content:center"><span class="material-symbols-outlined" style="font-size:16px">search</span> Show Similar Fonts</button>
+              <% } else { %>
+                <div class="dash-font-list"><div class="dash-font-item" style="justify-content:center;color:var(--text-muted)"><span class="material-symbols-outlined" style="font-size:32px;margin-right:8px">text_fields</span>No fonts detected yet</div></div>
+                <a href="/upload" class="dash-btn-primary dash-ripple" style="width:100%;margin-top:12px;justify-content:center"><span class="material-symbols-outlined">upload_file</span> Upload to Detect Fonts</a>
+              <% } %>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header"><h3 class="dash-card-title">Color Palette</h3><a href="/history" class="dash-card-link">View Full</a></div>
+              <% if (colorPalette && colorPalette.length > 0) { %>
+                <div class="dash-color-grid">
+                  <% colorPalette.forEach(function(color) { %>
+                    <div class="dash-color-swatch" style="background:<%= color.hex %>"></div>
+                  <% }) %>
+                </div>
+                <div class="dash-color-hexes">
+                  <% colorPalette.forEach(function(color) { %>
+                    <span class="dash-color-hex"><span class="mini-swatch" style="background:<%= color.hex %>"></span> <%= color.hex %></span>
+                  <% }) %>
+                </div>
+              <% } else { %>
+                <div class="dash-color-grid">
+                  <div class="dash-color-swatch" style="background:var(--surface-container-high)"></div>
+                  <div class="dash-color-swatch" style="background:var(--surface-container-high)"></div>
+                  <div class="dash-color-swatch" style="background:var(--surface-container-high)"></div>
+                  <div class="dash-color-swatch" style="background:var(--surface-container-high)"></div>
+                  <div class="dash-color-swatch" style="background:var(--surface-container-high)"></div>
+                  <div class="dash-color-swatch" style="background:var(--surface-container-high)"></div>
+                </div>
+                <p style="text-align:center;color:var(--text-muted);font-size:13px;margin-top:12px">Upload a design to extract colors</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-grid-3">
+          <div>
+            <div class="dash-card" style="margin-bottom:20px">
+              <div class="dash-card-header"><h3 class="dash-card-title">Design Analysis</h3></div>
+              <% if (designAnalysis && Object.keys(designAnalysis).length > 0) { %>
+              <div class="dash-analysis-grid">
+                  <div class="dash-analysis-item"><span class="material-symbols-outlined item-icon">category</span><div><p class="item-label">Design Style</p><p class="item-value dash-truncate" title="<%= designAnalysis.style %>"><%= designAnalysis.style %></p></div></div>
+                  <div class="dash-analysis-item"><span class="material-symbols-outlined item-icon">view_quilt</span><div><p class="item-label">Layout Type</p><p class="item-value dash-truncate" title="<%= designAnalysis.layout %>"><%= designAnalysis.layout %></p></div></div>
+                  <div class="dash-analysis-item"><span class="material-symbols-outlined item-icon">text_fields</span><div><p class="item-label">Typography</p><p class="item-value dash-truncate" title="<%= designAnalysis.typography %>"><%= designAnalysis.typography %></p></div></div>
+                  <div class="dash-analysis-item"><span class="material-symbols-outlined item-icon">emoji_objects</span><div><p class="item-label">Mood</p><p class="item-value dash-truncate" title="<%= designAnalysis.mood %>"><%= designAnalysis.mood %></p></div></div>
+                  <div class="dash-analysis-item" style="grid-column:1/-1"><span class="material-symbols-outlined item-icon">groups</span><div><p class="item-label">Target Audience</p><p class="item-value dash-truncate" title="<%= designAnalysis.audience %>"><%= designAnalysis.audience %></p></div></div>
+                </div>
+              <% } else { %>
+                <div class="dash-analysis-grid"><div class="dash-analysis-item" style="grid-column:1/-1;text-align:center;color:var(--text-muted)"><span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:8px">analytics</span>Upload a design to see AI-powered analysis</div></div>
+              <% } %>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header"><h3 class="dash-card-title">Detected Resources <% if (resources && resources.length > 0) { %><span style="font-weight:400;color:var(--text-muted)">(<%= resources.length %>)</span><% } %></h3></div>
+              <div class="dash-tabs" id="resourceTabs" role="tablist">
+                <button class="dash-tab active" data-tab="all" role="tab" aria-selected="true">All <span class="dash-tab-badge" id="badgeAll"><%= resources && resources.length || 0 %></span></button>
+                <button class="dash-tab" data-tab="icons" role="tab" aria-selected="false">Icons <span class="dash-tab-badge" id="badgeIcons"><%= resources && resources.filter(r => r.category === 'icons').length || 0 %></span></button>
+                <button class="dash-tab" data-tab="illustrations" role="tab" aria-selected="false">Illustrations <span class="dash-tab-badge" id="badgeIllustrations"><%= resources && resources.filter(r => r.category === 'illustrations').length || 0 %></span></button>
+                <button class="dash-tab" data-tab="vectors" role="tab" aria-selected="false">Vectors <span class="dash-tab-badge" id="badgeVectors"><%= resources && resources.filter(r => r.category === 'vectors').length || 0 %></span></button>
+              </div>
+              <div class="dash-resource-grid" id="resourceGrid">
+                <% if (resources && resources.length > 0) { %>
+                  <% resources.forEach(function(resource) { %>
+                    <div class="dash-resource-card" data-category="<%= resource.category %>">
+                      <div class="dash-resource-preview"><span class="material-symbols-outlined"><%= resource.preview %></span></div>
+                      <div class="dash-resource-body"><h4><%= resource.name %></h4><p><%= resource.source %></p></div>
+                    </div>
+                  <% }) %>
+                <% } else { %>
+                  <div class="dash-resource-card" style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:24px"><span class="material-symbols-outlined" style="font-size:32px;display:block;margin-bottom:8px">inventory_2</span>No resources detected yet</div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="dash-card">
+              <div class="dash-card-header"><h3 class="dash-card-title">Web Sources<% if (webSources && webSources.length > 0) { %><span class="dash-badge dash-badge-match" style="font-size:12px"><%= webSources.length %> matches</span><% } %></h3></div>
+              <div class="dash-source-list">
+                <% if (webSources && webSources.length > 0) { %>
+                  <% webSources.forEach(function(source) { %>
+                    <div class="dash-source-item"><div class="dash-source-icon"><span class="material-symbols-outlined"><%= source.icon %></span></div><div class="dash-source-info"><h4><%= source.name %></h4></div><span class="dash-source-match"><%= source.match %>%</span></div>
+                  <% }) %>
+                <% } else { %>
+                  <div class="dash-source-item" style="justify-content:center;color:var(--text-muted);padding:24px"><span class="material-symbols-outlined" style="font-size:24px;margin-right:8px">cloud_search</span>Upload a design to find web sources</div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card" style="margin-top:0">
+          <div class="dash-card-header"><div><h3 class="dash-card-title">AI Background Generator</h3><p style="font-size:13px;color:var(--text-secondary);margin-top:4px"><%= recentAnalysis ? 'Generate background alternatives based on your design' : 'Upload a design to generate AI background alternatives' %></p></div></div>
+          <div class="dash-bg-empty">
+            <span class="material-symbols-outlined">auto_awesome</span>
+            <p>Upload a design to generate AI background alternatives</p>
+            <a href="/bg-generator" class="dash-btn-primary dash-ripple" style="margin-top:16px;display:inline-flex"><span class="material-symbols-outlined">auto_fix_high</span> Open Background Generator</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="dash-toast-container" id="toastContainer"></div>
+</div>
+
+<script>
+  window.dashboardData = {
+    fontsFound: <%= fontsFound || 0 %>,
+    colorsExtracted: <%= colorsExtracted || 0 %>,
+    resourcesFound: <%= resourcesFound || 0 %>,
+    avgMatchScore: <%= avgMatchScore || 0 %>,
+    hasRecentAnalysis: <%= recentAnalysis ? 'true' : 'false' %>,
+  };
+</script>
+<script src="/js/dashboard-v2.js"></script>
+<%- include('partials/footer') %>

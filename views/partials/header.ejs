@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= typeof title !== "undefined" ? title : "Design Resource Finder" %></title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1&display=swap"/>
+<link rel="stylesheet" href="/css/tailwind.css"/>
+<link rel="stylesheet" href="/css/modern.css"/>
+<script src="/js/theme.js" defer></script>
+</head>
+<body>
+<!-- Glassmorphism Navbar -->
+<nav class="navbar fixed top-0 w-full z-50" style="background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--nav-border);">
+<div class="flex justify-between items-center px-md py-sm" style="max-width:1280px;margin:0 auto;">
+<div class="flex items-center gap-xs">
+<a href="<%= user ? '/dashboard' : '/' %>" class="flex items-center gap-2 no-underline">
+<div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--primary),#8B5CF6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">
+<span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL'1;">auto_awesome</span>
+</div>
+<span class="font-headline-sm text-headline-sm font-bold" style="color:var(--on-surface);">Design Resource Finder</span>
+</a>
+</div>
+
+<!-- Mobile Menu Toggle -->
+<button id="mobileMenuToggle" class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--primary-alpha-20);color:var(--primary);" aria-label="Toggle mobile menu" aria-expanded="false" data-sidebar-toggle>
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+
+<!-- Desktop Navigation -->
+<div class="hidden md:flex items-center" style="gap:16px;">
+<% if (user) { %>
+<a class="px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);transition:all 0.2s;font-weight:500;" href="/dashboard" onmouseenter="this.style.color='var(--primary)';this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.color='var(--text-secondary)';this.style.background='transparent'">Dashboard</a>
+<% } else { %>
+<a class="px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);transition:all 0.2s;font-weight:500;" href="/" onmouseenter="this.style.color='var(--primary)';this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.color='var(--text-secondary)';this.style.background='transparent'">Home</a>
+<a class="px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);transition:all 0.2s;font-weight:500;" href="/features" onmouseenter="this.style.color='var(--primary)';this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.color='var(--text-secondary)';this.style.background='transparent'">Features</a>
+<a class="px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);transition:all 0.2s;font-weight:500;" href="/how-it-works" onmouseenter="this.style.color='var(--primary)';this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.color='var(--text-secondary)';this.style.background='transparent'">How It Works</a>
+<a class="px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);transition:all 0.2s;font-weight:500;" href="/showcase" onmouseenter="this.style.color='var(--primary)';this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.color='var(--text-secondary)';this.style.background='transparent'">Showcase</a>
+<a class="px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);transition:all 0.2s;font-weight:500;" href="/#pricing" onmouseenter="this.style.color='var(--primary)';this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.color='var(--text-secondary)';this.style.background='transparent'">Pricing</a>
+<a class="px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);transition:all 0.2s;font-weight:500;" href="/learning" onmouseenter="this.style.color='var(--primary)';this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.color='var(--text-secondary)';this.style.background='transparent'">Learning</a>
+<a class="px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);transition:all 0.2s;font-weight:500;" href="/faq" onmouseenter="this.style.color='var(--primary)';this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.color='var(--text-secondary)';this.style.background='transparent'">FAQ</a>
+<% } %>
+</div>
+
+<!-- Right Side Actions -->
+<div class="flex items-center gap-2">
+<% if (user) { %>
+<a href="/dashboard" class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--primary-alpha-20);color:var(--primary);" aria-label="Notifications">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+</a>
+<% } %>
+<a href="/search" class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--primary-alpha-20);color:var(--primary);" aria-label="Search">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</a>
+<button id="themeToggle" class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--primary-alpha-20);color:var(--primary);" aria-label="Toggle theme" data-theme-toggle>
+<span class="material-symbols-outlined text-[18px]" data-theme-icon>dark_mode</span>
+</button>
+<% if (user) { %>
+<div class="relative group">
+<a href="/profile" class="w-8 h-8 rounded-full flex items-center justify-center font-bold" style="background:linear-gradient(135deg,var(--primary),#8B5CF6);color:#fff;font-size:14px;">
+<%= user.name ? user.name.charAt(0).toUpperCase() : "U" %>
+</a>
+<div class="absolute right-0 top-10 w-48 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50" style="background:var(--card-bg);border:1px solid var(--nav-border);box-shadow:var(--shadow-lg);">
+<div class="p-sm" style="border-bottom:1px solid var(--nav-border);">
+<p class="font-body-md text-body-md" style="color:var(--on-surface);font-weight:600;truncate"><%= user.name %></p>
+<p class="font-label-sm text-label-sm" style="color:var(--text-secondary);truncate"><%= user.email %></p>
+</div>
+<div class="p-sm">
+<a href="/dashboard" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'">Dashboard</a>
+<a href="/profile" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'">Profile</a>
+<a href="/settings" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'">Settings</a>
+<% if (user.role === "admin") { %>
+<a href="/admin" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color:var(--primary);font-weight:600;">Admin Panel</a>
+<% } %>
+</div>
+<div class="p-sm" style="border-top:1px solid var(--nav-border);">
+<a href="/auth/logout" class="block px-sm py-2 rounded-lg transition-colors font-body-md" style="color:#EF4444;" onmouseenter="this.style.background='rgba(239,68,68,0.1)'" onmouseleave="this.style.background='transparent'">Sign Out</a>
+</div>
+</div>
+</div>
+<% } else { %>
+<a href="/auth/login" class="font-body-md" style="color:var(--text-secondary);font-weight:500;padding:6px 14px;border-radius:10px;transition:all 0.2s;" onmouseenter="this.style.color='var(--primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Sign In</a>
+<a href="/auth/register" class="font-bold px-4 py-2 rounded-xl transition-all active:scale-95 duration-200" style="background:linear-gradient(135deg,var(--primary),#8B5CF6);color:#fff;" onmouseenter="this.style.boxShadow='0 4px 16px rgba(124,58,237,0.3)'" onmouseleave="this.style.boxShadow='none'">Get Started</a>
+<% } %>
+</div>
+</div>
+</nav>
+
+<!-- Mobile Menu Drawer -->
+<div id="mobileMenu" class="fixed inset-0 top-[60px] left-0 w-full h-screen md:hidden transform -translate-x-full transition-transform duration-300 z-40" style="background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid var(--nav-border);">
+<div class="flex flex-col h-full overflow-y-auto">
+<div class="flex-1 p-md">
+<% if (user) { %>
+<a href="/dashboard" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--primary);font-weight:600;background:var(--primary-alpha-10);"><span class="material-symbols-outlined text-[18px]">dashboard</span> Dashboard</a>
+<% } else { %>
+<a href="/" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--primary);font-weight:600;background:var(--primary-alpha-10);"><span class="material-symbols-outlined text-[18px]">home</span> Home</a>
+<a href="/features" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-second)'"><span class="material-symbols-outlined text-[18px]">auto_awesome</span> Features</a>
+<a href="/how-it-works" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'"><span class="material-symbols-outlined text-[18px]">timeline</span> How It Works</a>
+<a href="/showcase" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'"><span class="material-symbols-outlined text-[18px]">grid_view</span> Showcase</a>
+<a href="/#pricing" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'"><span class="material-symbols-outlined text-[18px]">sell</span> Pricing</a>
+<a href="/learning" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'"><span class="material-symbols-outlined text-[18px]">school</span> Learning</a>
+<a href="/faq" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'"><span class="material-symbols-outlined text-[18px]">help</span> FAQ</a>
+<a href="/search" class="flex items-center gap-2 px-3 py-2.5 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)';this.style.color='var(--primary)'" onmouseleave="this.style.background='transparent';this.style.color='var(--text-secondary)'"><span class="material-symbols-outlined text-[18px]">search</span> Search</a>
+<% } %>
+</div>
+<div style="border-top:1px solid var(--nav-border);padding:16px;">
+<% if (user) { %>
+<a href="/profile" class="block px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.background='transparent'">Profile</a>
+<a href="/settings" class="block px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.background='transparent'">Settings</a>
+<% if (user.role === "admin") { %>
+<a href="/admin" class="block px-3 py-2 rounded-lg font-body-md" style="color:var(--primary);font-weight:600;">Admin Panel</a>
+<% } %>
+<a href="/auth/logout" class="block px-3 py-2 rounded-lg font-body-md" style="color:#EF4444;" onmouseenter="this.style.background='rgba(239,68,68,0.1)'" onmouseleave="this.style.background='transparent'">Sign Out</a>
+<% } else { %>
+<a href="/auth/login" class="block px-3 py-2 rounded-lg font-body-md" style="color:var(--text-secondary);" onmouseenter="this.style.background='var(--primary-alpha-10)'" onmouseleave="this.style.background='transparent'">Sign In</a>
+<a href="/auth/register" class="block px-3 py-2 rounded-xl font-bold mt-2 text-center" style="background:linear-gradient(135deg,var(--primary),#8B5CF6);color:#fff;">Get Started</a>
+<% } %>
+</div>
+</div>
+</div>
+
+<script src="/js/nav.js"></script>

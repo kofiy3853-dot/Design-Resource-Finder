@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
+<h1 class="font-headline-lg text-headline-lg mb-xl">Search</h1>
+<form method="GET" action="/search" class="max-w-2xl mb-xl">
+<div class="flex gap-md">
+<input name="q" value="<%= query %>" placeholder="Search by font, color, style, or keyword..." class="flex-1 bg-surface-container-high border border-white/5 rounded-lg px-md py-3 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary font-body-md"/>
+<button type="submit" class="bg-primary text-on-primary px-xl rounded-lg font-bold hover:opacity-90 transition-all flex items-center gap-xs">
+<span class="material-symbols-outlined">search</span> Search
+</button>
+</div>
+</form>
+<% if (query) { %>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md"><%= results.length %> result(s) for "<%= query %>"</p>
+<% if (results.length > 0) { %>
+<div class="space-y-md">
+<% results.forEach(a => { %>
+<a href="/analysis/<%= a.id %>" class="glass-card p-md rounded-xl flex items-center gap-md hover:border-primary/30 transition-all block">
+<div class="flex-1 min-w-0">
+<p class="font-body-md text-body-md text-on-surface truncate"><%= a.title || 'Untitled' %></p>
+<p class="font-label-sm text-label-sm text-on-surface-variant"><%= new Date(a.created_at).toLocaleDateString() %></p>
+</div>
+<span class="px-sm py-1 rounded-full text-xs font-bold <%= a.status === 'completed' ? 'bg-primary/20 text-primary' : 'bg-on-surface-variant/20 text-on-surface-variant' %>"><%= a.status %></span>
+</a>
+<% }) %>
+</div>
+<% } else { %>
+<p class="text-center text-on-surface-variant font-body-md py-xl">No results found. Try different keywords.</p>
+<% } %>
+<% } %>
+</div>
+<%- include('partials/footer') %>

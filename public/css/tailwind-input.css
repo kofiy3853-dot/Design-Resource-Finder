@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-on-surface overflow-x-hidden;
+  }
+}
+
+/* Custom components */
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-md transition-all duration-300 border;
+    background: var(--card-bg);
+    border-color: var(--card-border);
+  }
+
+  .glass-card:hover {
+    border-color: var(--primary-fixed-dim);
+    box-shadow: 0 0 32px var(--primary-glow);
+    @apply shadow-xl;
+  }
+
+  .hero-gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-bold;
+  }
+
+  .cta-glow {
+    @apply shadow-lg transition-all duration-300 hover:shadow-2xl;
+  }
+}

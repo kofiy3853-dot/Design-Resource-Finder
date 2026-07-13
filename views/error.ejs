@@ -1,0 +1,11 @@
+<%- include('partials/header') %>
+<div class="min-h-screen flex items-center justify-center px-md pt-24 pb-xl">
+<div class="text-center">
+<span class="material-symbols-outlined text-6xl text-on-surface-variant/30 mb-md" style="font-variation-settings: 'FILL' 1;">error_outline</span>
+<h1 class="font-display-xl text-display-xl hero-gradient-text mb-sm"><%= typeof status !== 'undefined' ? status : 500 %></h1>
+<h2 class="font-headline-lg text-headline-lg mb-sm"><%= typeof message !== 'undefined' ? message : 'Something went wrong' %></h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg">Please try again or contact support if the problem persists.</p>
+<a href="/" class="inline-block bg-primary text-on-primary font-bold px-xl py-md rounded-xl hover:opacity-90 transition-all">Return Home</a>
+</div>
+</div>
+<%- include('partials/footer') %>

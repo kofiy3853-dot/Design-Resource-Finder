@@ -1,0 +1,145 @@
+<%- include('../partials/header') %>
+<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md">
+    <div>
+      <h1 class="font-headline-lg text-headline-lg mb-xs">Analysis Management</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant">Monitor all design analyses and processing status</p>
+    </div>
+    <a href="/admin" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back
+    </a>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-md mb-xl">
+    <div class="glass-card p-lg rounded-xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-body-sm text-body-md text-on-surface-variant mb-xs">Total</p>
+          <p class="font-display-xl text-3xl text-primary font-bold"><%= total %></p>
+        </div>
+        <span class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-[24px]">assessment</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="glass-card p-lg rounded-xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-body-sm text-body-md text-on-surface-variant mb-xs">Completed</p>
+          <p class="font-display-xl text-3xl text-secondary font-bold">0</p>
+        </div>
+        <span class="w-12 h-12 rounded-lg bg-secondary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-secondary text-[24px]">check_circle</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="glass-card p-lg rounded-xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-body-sm text-body-md text-on-surface-variant mb-xs">Processing</p>
+          <p class="font-display-xl text-3xl text-tertiary font-bold">0</p>
+        </div>
+        <span class="w-12 h-12 rounded-lg bg-tertiary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-tertiary text-[24px]">hourglass_top</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="glass-card p-lg rounded-xl">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-body-sm text-body-md text-on-surface-variant mb-xs">This Page</p>
+          <p class="font-display-xl text-3xl text-on-surface-variant font-bold"><%= analyses.length %></p>
+        </div>
+        <span class="w-12 h-12 rounded-lg bg-on-surface-variant/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-surface-variant text-[24px]">view_list</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analyses Table -->
+  <div class="glass-card rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-white/5 bg-surface-container-high/50">
+            <th class="text-left px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Title</th>
+            <th class="text-left px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">User</th>
+            <th class="text-center px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Status</th>
+            <th class="text-center px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Confidence</th>
+            <th class="text-right px-lg py-md font-body-md text-on-surface-variant text-xs font-bold uppercase tracking-wider">Date</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+          <% (analyses || []).forEach(a => { %>
+            <tr class="hover:bg-white/5 transition-colors">
+              <td class="px-lg py-md">
+                <p class="font-body-md text-on-surface font-bold truncate"><%= a.title || 'Untitled' %></p>
+              </td>
+              <td class="px-lg py-md">
+                <p class="font-body-sm text-body-sm text-on-surface-variant"><%= a.user_name %></p>
+              </td>
+              <td class="px-lg py-md text-center">
+                <span class="px-sm py-xs rounded-full text-xs font-bold inline-block <%= a.status === 'completed' ? 'bg-primary/20 text-primary' : a.status === 'processing' ? 'bg-secondary/20 text-secondary' : a.status === 'failed' ? 'bg-error/20 text-error' : 'bg-on-surface-variant/20 text-on-surface-variant' %>">
+                  <span class="inline-block w-2 h-2 rounded-full mr-1 <%= a.status === 'completed' ? 'bg-primary' : a.status === 'processing' ? 'bg-secondary animate-pulse' : a.status === 'failed' ? 'bg-error' : 'bg-on-surface-variant' %>" style="display: inline-block;"></span>
+                  <%= a.status %>
+                </span>
+              </td>
+              <td class="px-lg py-md text-center">
+                <% if (a.confidence_score) { %>
+                  <div class="flex items-center justify-center gap-xs">
+                    <div class="w-12 h-1 rounded-full bg-surface-container-high overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-primary to-secondary" style="width: <%= a.confidence_score %>%;"></div>
+                    </div>
+                    <span class="text-xs font-bold text-on-surface-variant"><%= a.confidence_score %>%</span>
+                  </div>
+                <% } else { %>
+                  <span class="text-xs text-on-surface-variant">—</span>
+                <% } %>
+              </td>
+              <td class="px-lg py-md text-right">
+                <p class="font-label-sm text-label-sm text-on-surface-variant"><%= new Date(a.created_at).toLocaleDateString() %></p>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <% if (pages > 1) { %>
+    <div class="flex items-center justify-center gap-md mt-xl">
+      <% if (page > 1) { %>
+        <a href="/admin/analyses?page=1" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]">first_page</span>
+        </a>
+        <a href="/admin/analyses?page=<%= page-1 %>" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </a>
+      <% } %>
+      
+      <div class="flex items-center gap-xs">
+        <span class="text-on-surface-variant font-body-md">Page</span>
+        <input type="number" min="1" max="<%= pages %>" value="<%= page %>" class="w-12 px-sm py-xs bg-surface-container border border-white/10 rounded-lg text-center font-body-md text-on-surface" onchange="window.location.href='/admin/analyses?page=' + this.value">
+        <span class="text-on-surface-variant font-body-md">of <%= pages %></span>
+      </div>
+
+      <% if (page < pages) { %>
+        <a href="/admin/analyses?page=<%= page+1 %>" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        </a>
+        <a href="/admin/analyses?page=<%= pages %>" class="px-md py-sm bg-on-surface-variant/10 border border-on-surface-variant/30 rounded-lg hover:bg-on-surface-variant/20 transition-all font-body-md text-on-surface-variant font-bold flex items-center gap-xs">
+          <span class="material-symbols-outlined text-[18px]">last_page</span>
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: design-resource-finder
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build:tailwind
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_HOST
+        fromDatabase:
+          name: design-resource-finder-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: design-resource-finder-db
+          property: port
+      - key: DB_USER
+        fromDatabase:
+          name: design-resource-finder-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: design-resource-finder-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: design-resource-finder-db
+          property: database
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: UPLOAD_MAX_SIZE
+        value: 10485760
+      - key: SITE_URL
+        value: https://design-resource-finder.onrender.com
+
+databases:
+  - name: design-resource-finder-db
+    plan: free
+    databaseName: design_resource_finder

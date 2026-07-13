@@ -1,0 +1,23 @@
+<%- include('partials/header') %>
+<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
+<div class="max-w-2xl mx-auto">
+<div class="text-center mb-xl">
+<div class="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-md">
+<span class="text-3xl text-primary font-bold font-display-xl"><%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %></span>
+</div>
+<h1 class="font-headline-lg text-headline-lg"><%= user.name %></h1>
+<p class="font-body-md text-body-md text-on-surface-variant"><%= user.email %></p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-xs">Joined <%= new Date(user.created_at).toLocaleDateString() %></p>
+</div>
+<div class="glass-card p-lg rounded-xl mb-lg">
+<h2 class="font-headline-sm text-headline-sm mb-md">Account Information</h2>
+<div class="space-y-md">
+<div><label class="font-label-sm text-label-sm text-on-surface-variant block">Full Name</label><p class="font-body-md text-body-md text-on-surface"><%= user.name %></p></div>
+<div><label class="font-label-sm text-label-sm text-on-surface-variant block">Email</label><p class="font-body-md text-body-md text-on-surface"><%= user.email %></p></div>
+<div><label class="font-label-sm text-label-sm text-on-surface-variant block">Role</label><p class="font-body-md text-body-md text-primary capitalize"><%= user.role %></p></div>
+</div>
+</div>
+<a href="/settings" class="block text-center py-3 border border-white/10 rounded-lg font-bold hover:bg-white/5 transition-all font-body-md">Edit Settings</a>
+</div>
+</div>
+<%- include('partials/footer') %>

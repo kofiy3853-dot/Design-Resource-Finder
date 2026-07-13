@@ -1,0 +1,553 @@
+<%- include('partials/header') %>
+<main>
+<style>
+.floating-element { animation: float 6s ease-in-out infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+.floating-delay-1 { animation-delay: 1s; }
+.floating-delay-2 { animation-delay: 2s; }
+.floating-delay-3 { animation-delay: 3s; }
+.particle { position: absolute; width: 4px; height: 4px; background: rgba(179,197,255,0.4); border-radius: 50%; }
+.particle:nth-child(1) { top: 10%; left: 10%; animation: float 8s ease-in-out infinite; }
+.particle:nth-child(2) { top: 20%; right: 15%; animation: float 7s ease-in-out infinite 1s; }
+.particle:nth-child(3) { bottom: 30%; left: 20%; animation: float 9s ease-in-out infinite 2s; }
+.particle:nth-child(4) { bottom: 10%; right: 25%; animation: float 6s ease-in-out infinite 0.5s; }
+.particle:nth-child(5) { top: 50%; left: 5%; animation: float 10s ease-in-out infinite 1.5s; }
+.particle:nth-child(6) { top: 40%; right: 8%; animation: float 7.5s ease-in-out infinite 2.5s; }
+.demo-card { opacity: 0; transform: translateX(20px); transition: all 0.6s ease-out; }
+.demo-card.active { opacity: 1; transform: translateX(0); }
+.category-card { transition: all 0.4s cubic-bezier(0.4,0,0.2,1); }
+.category-card:hover { transform: scale(1.02); }
+.user-card { transition: all 0.3s ease-out; }
+.user-card:hover { transform: translateY(-6px); }
+.timeline-step { position: relative; }
+.timeline-step::after { content: ''; position: absolute; top: 40px; left: 20px; width: 2px; height: calc(100% - 40px); background: linear-gradient(to bottom, rgba(179,197,255,0.4), transparent); }
+.timeline-step:last-child::after { display: none; }
+</style>
+<section class="relative min-h-[90vh] flex items-center pt-24 overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/10 via-surface to-secondary-container/5"></div>
+<div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
+<div class="relative z-10 max-w-container-max mx-auto px-md w-full">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-xl items-center">
+<div class="reveal">
+<div class="inline-flex items-center gap-xs px-sm py-xs bg-secondary-container/20 border border-secondary-container/30 rounded-full mb-md">
+<span class="material-symbols-outlined text-secondary text-[18px]">auto_awesome</span>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">AI-Powered Design Analysis</span>
+</div>
+<h1 class="font-display-xl text-display-xl hero-gradient-text mb-sm leading-tight">
+Discover Every Design <br/>Secret with AI
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg mb-lg">
+Upload any flyer, poster, logo, social media post, or banner and instantly uncover the fonts, colors, layout, design style, images, and creative techniques used to build it.
+</p>
+<div class="flex flex-col sm:flex-row gap-md">
+<a href="<%= user ? '/upload' : '/auth/register' %>" class="cta-glow bg-primary-container text-on-primary-container font-bold px-xl py-md rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center gap-xs text-body-lg">
+<span class="material-symbols-outlined">auto_awesome</span> Analyze a Design
+</a>
+<a href="#how-it-works" class="border border-white/15 bg-white/5 backdrop-blur-md text-on-surface font-bold px-xl py-md rounded-xl hover:bg-white/10 transition-all active:scale-95 text-body-lg flex items-center gap-xs">
+<span class="material-symbols-outlined">play_circle</span> Watch Demo
+</a>
+</div>
+</div>
+<div class="relative reveal" style="transition-delay: 0.2s;">
+<div class="glass-card rounded-2xl p-md border-primary/20 shadow-2xl shadow-primary/5">
+<div class="flex items-center gap-md mb-md pb-md border-b border-white/5">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<div class="flex-1"><p class="font-body-md text-body-md text-on-surface font-semibold">Summer Sale Flyer.pdf</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Uploaded · 2.4 MB</p></div>
+<span class="material-symbols-outlined text-primary animate-pulse">sync</span>
+</div>
+<div class="space-y-sm">
+<div class="flex items-center gap-sm p-sm bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Fonts Found: Inter Bold, Playfair Display</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Colors Extracted: 6 unique colors</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Style Detected: Modern + Luxury</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Layout: 12-column grid · Balanced</span>
+</div>
+<div class="flex items-center gap-sm p-sm bg-surface-container-high rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<span class="font-body-md text-body-md text-on-surface">Accessibility Score: 92/100 · WCAG AA</span>
+</div>
+</div>
+<div class="mt-md pt-md border-t border-white/5 text-center">
+<p class="font-label-sm text-label-sm text-primary font-bold">Analysis Complete · 2.3s</p>
+</div>
+</div>
+<div class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl floating-element"></div>
+<div class="absolute -top-6 -left-6 w-24 h-24 bg-secondary-container/20 rounded-full blur-3xl floating-element floating-delay-1"></div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<div class="inline-flex items-center gap-xs px-sm py-xs bg-primary/10 border border-primary/20 rounded-full mb-md">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Platform Capabilities</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg mb-sm">Everything You Need to Understand Great Design</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">Twelve powerful AI-driven modules that deconstruct every visual detail and teach you the craft behind it.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+<a href="/ai-design-analysis" class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30 block no-underline">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">psychology</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs" style="color:var(--on-surface);">AI Design Analysis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Analyze every visual component of a design within seconds.</p>
+</a>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.05s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">text_fields</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Font Detection</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Detect font name, family, weight, and find similar alternatives.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.1s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">palette</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Color Extraction</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Extract HEX, RGB, HSL values from primary, secondary, and accent colors.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.15s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">format_align_left</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Typography Analysis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Understand hierarchy, spacing, readability, and alignment.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.2s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">grid_view</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Layout Analysis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Discover grids, spacing, margins, and visual balance.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.25s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">image</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Image Detection</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Identify products, flowers, people, backgrounds, and illustrations.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.3s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">category</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Shape Recognition</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Find circles, rectangles, blobs, and decorative elements.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.35s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Style Detection</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Recognize Minimal, Luxury, Corporate, Modern, Vintage, and more.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.4s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">shield</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Accessibility Checker</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Evaluate contrast, readability, and WCAG compliance.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.45s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">school</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">AI Design Mentor</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Learn why colors, typography, and layout choices work.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.5s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">auto_fix</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">AI Prompt Generator</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Generate prompts for DALL-E, Midjourney, Firefly, and more.</p>
+</div>
+<div class="glass-card p-md rounded-xl reveal text-center hover:border-primary/30" style="transition-delay:0.55s">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Report Generator</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Download analysis as PDF, JSON, or color palette.</p>
+</div>
+</div>
+</section>
+<section class="py-xl bg-surface-container overflow-hidden">
+<div class="max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Intelligence Categories</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Five pillars of design intelligence working together to give you a complete understanding of any visual asset.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<div class="category-card glass-card p-lg rounded-xl reveal border-l-4 border-l-primary">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">text_fields</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm">Typography Intelligence</h3>
+</div>
+<ul class="space-y-sm">
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-primary text-[18px]">check</span> Font Detection</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-primary text-[18px]">check</span> Font Pairing Analysis</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-primary text-[18px]">check</span> Weight & Size Detection</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-primary text-[18px]">check</span> Text Hierarchy Mapping</li>
+</ul>
+</div>
+<div class="category-card glass-card p-lg rounded-xl reveal border-l-4 border-l-secondary" style="transition-delay:0.1s">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">palette</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm">Color Intelligence</h3>
+</div>
+<ul class="space-y-sm">
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-secondary text-[18px]">check</span> Color Extraction</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-secondary text-[18px]">check</span> Color Harmony Analysis</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-secondary text-[18px]">check</span> Psychology Insights</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-secondary text-[18px]">check</span> Accessibility Scoring</li>
+</ul>
+</div>
+<div class="category-card glass-card p-lg rounded-xl reveal border-l-4 border-l-tertiary" style="transition-delay:0.2s">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">grid_view</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm">Layout Intelligence</h3>
+</div>
+<ul class="space-y-sm">
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-tertiary text-[18px]">check</span> Grid Detection</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-tertiary text-[18px]">check</span> White Space Analysis</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-tertiary text-[18px]">check</span> Alignment Mapping</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-tertiary text-[18px]">check</span> Composition Balance</li>
+</ul>
+</div>
+<div class="category-card glass-card p-lg rounded-xl reveal border-l-4 border-l-primary" style="transition-delay:0.3s">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">image</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm">Visual Asset Detection</h3>
+</div>
+<ul class="space-y-sm">
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-primary text-[18px]">check</span> Image & Object Detection</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-primary text-[18px]">check</span> Icon & Logo Recognition</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-primary text-[18px]">check</span> Shape Classification</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-primary text-[18px]">check</span> Background Analysis</li>
+</ul>
+</div>
+<div class="category-card glass-card p-lg rounded-xl reveal border-l-4 border-l-secondary" style="transition-delay:0.4s">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">school</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm">AI Learning</h3>
+</div>
+<ul class="space-y-sm">
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-secondary text-[18px]">check</span> Design Explanation</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-secondary text-[18px]">check</span> Recreation Guides</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-secondary text-[18px]">check</span> Step-by-Step Tutorials</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-secondary text-[18px]">check</span> Improvement Tips</li>
+</ul>
+</div>
+<div class="category-card glass-card p-lg rounded-xl reveal border-l-4 border-l-tertiary" style="transition-delay:0.5s">
+<div class="flex items-center gap-sm mb-md">
+<div class="w-10 h-10 rounded-lg bg-tertiary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">auto_fix</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm">AI Creation Tools</h3>
+</div>
+<ul class="space-y-sm">
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-tertiary text-[18px]">check</span> Prompt Generation</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-tertiary text-[18px]">check</span> Multi-Platform Prompts</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-tertiary text-[18px]">check</span> Style Recreation</li>
+<li class="flex items-center gap-xs text-on-surface-variant font-body-md"><span class="material-symbols-outlined text-tertiary text-[18px]">check</span> Resource Recommendations</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="how-it-works" class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">How AI Analysis Works</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">From upload to insights in seconds — six steps of deep visual intelligence.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-md">
+<div class="timeline-step glass-card p-md rounded-xl text-center reveal">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">upload_file</span>
+</div>
+<p class="font-label-sm text-label-sm text-primary font-bold mb-xs">Step 1</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold">Upload</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Drag & drop any image or PDF</p>
+</div>
+<div class="timeline-step glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.1s">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">visibility</span>
+</div>
+<p class="font-label-sm text-label-sm text-primary font-bold mb-xs">Step 2</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold">AI Reads</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Neural network scans the design</p>
+</div>
+<div class="timeline-step glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.2s">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">text_fields</span>
+</div>
+<p class="font-label-sm text-label-sm text-primary font-bold mb-xs">Step 3</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold">Detect Fonts</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Identify typefaces and weights</p>
+</div>
+<div class="timeline-step glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.3s">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">palette</span>
+</div>
+<p class="font-label-sm text-label-sm text-primary font-bold mb-xs">Step 4</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold">Extract Colors</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Map color palette with hex codes</p>
+</div>
+<div class="timeline-step glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.4s">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">grid_view</span>
+</div>
+<p class="font-label-sm text-label-sm text-primary font-bold mb-xs">Step 5</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold">Analyze Layout</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Evaluate grid, spacing, balance</p>
+</div>
+<div class="timeline-step glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.5s">
+<div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<p class="font-label-sm text-label-sm text-primary font-bold mb-xs">Step 6</p>
+<h4 class="font-body-md text-body-md text-on-surface font-semibold">Generate Report</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Download or view full analysis</p>
+</div>
+</div>
+</section>
+<section class="py-xl bg-surface-container overflow-hidden">
+<div class="max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">See Analysis in Action</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Upload a design and watch the AI deconstruct it in real time.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-lg items-center">
+<div class="glass-card rounded-2xl p-lg reveal order-2 lg:order-1">
+<div class="rounded-xl overflow-hidden bg-surface-container-high p-md h-64 flex items-center justify-center border border-white/5">
+<div class="text-center">
+<span class="material-symbols-outlined text-5xl text-on-surface-variant/30 mb-md" style="font-variation-settings:'FILL'1;">image</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Uploaded Design Preview</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-xs">Your image will appear here</p>
+</div>
+</div>
+</div>
+<div class="space-y-sm reveal order-1 lg:order-2">
+<div class="demo-card glass-card p-sm rounded-xl flex items-center gap-sm border-l-4 border-l-primary" style="transition-delay:0s">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<div><p class="font-body-md text-body-md text-on-surface">Fonts Found</p><p class="font-label-sm text-label-sm text-on-surface-variant">Inter, Playfair Display, JetBrains Mono</p></div>
+</div>
+<div class="demo-card glass-card p-sm rounded-xl flex items-center gap-sm border-l-4 border-l-secondary" style="transition-delay:0.1s">
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+<div><p class="font-body-md text-body-md text-on-surface">Colors Found</p><p class="font-label-sm text-label-sm text-on-surface-variant">6 colors extracted with HEX, RGB, HSL</p></div>
+</div>
+<div class="demo-card glass-card p-sm rounded-xl flex items-center gap-sm border-l-4 border-l-tertiary" style="transition-delay:0.2s">
+<span class="material-symbols-outlined text-tertiary text-[18px]">check_circle</span>
+<div><p class="font-body-md text-body-md text-on-surface">Design Style</p><p class="font-label-sm text-label-sm text-on-surface-variant">Modern Corporate + Glassmorphism</p></div>
+</div>
+<div class="demo-card glass-card p-sm rounded-xl flex items-center gap-sm border-l-4 border-l-primary" style="transition-delay:0.3s">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+<div><p class="font-body-md text-body-md text-on-surface">Layout Analysis</p><p class="font-label-sm text-label-sm text-on-surface-variant">12-column grid · Symmetrical · Balanced</p></div>
+</div>
+<div class="demo-card glass-card p-sm rounded-xl flex items-center gap-sm border-l-4 border-l-secondary" style="transition-delay:0.4s">
+<span class="material-symbols-outlined text-secondary text-[18px]">check_circle</span>
+<div><p class="font-body-md text-body-md text-on-surface">Accessibility Score</p><p class="font-label-sm text-label-sm text-on-surface-variant">92/100 · WCAG AA Compliant</p></div>
+</div>
+<div class="demo-card glass-card p-sm rounded-xl flex items-center gap-sm border-l-4 border-l-tertiary" style="transition-delay:0.5s">
+<span class="material-symbols-outlined text-tertiary text-[18px]">check_circle</span>
+<div><p class="font-body-md text-body-md text-on-surface">AI Suggestions</p><p class="font-label-sm text-label-sm text-on-surface-variant">5 improvement recommendations</p></div>
+</div>
+</div>
+</div>
+</div>
+<script src="/js/features.js"></script>
+</section>
+<section class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Simple, Transparent Pricing</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Start free and scale as your design analysis needs grow.</p>
+</div>
+<div class="max-w-4xl mx-auto">
+<div class="glass-card rounded-2xl overflow-hidden reveal">
+<table class="w-full">
+<thead>
+<tr class="border-b border-white/5">
+<th class="text-left p-md font-headline-sm text-headline-sm text-on-surface">Feature</th>
+<th class="text-center p-md font-headline-sm text-headline-sm text-on-surface">Free</th>
+<th class="text-center p-md font-headline-sm text-headline-sm text-primary">Pro</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="hover:bg-white/5 transition-colors"><td class="p-md font-body-md text-on-surface">Upload Images</td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td></tr>
+<tr class="hover:bg-white/5 transition-colors"><td class="p-md font-body-md text-on-surface">Font Detection</td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td></tr>
+<tr class="hover:bg-white/5 transition-colors"><td class="p-md font-body-md text-on-surface">Color Analysis</td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td></tr>
+<tr class="hover:bg-white/5 transition-colors"><td class="p-md font-body-md text-on-surface">Layout Analysis</td><td class="p-md text-center font-body-md text-on-surface-variant">Limited</td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td></tr>
+<tr class="hover:bg-white/5 transition-colors"><td class="p-md font-body-md text-on-surface">AI Suggestions</td><td class="p-md text-center font-body-md text-on-surface-variant">Limited</td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td></tr>
+<tr class="hover:bg-white/5 transition-colors"><td class="p-md font-body-md text-on-surface">Unlimited Reports</td><td class="p-md text-center"><span class="material-symbols-outlined text-on-surface-variant/30">close</span></td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td></tr>
+<tr class="hover:bg-white/5 transition-colors"><td class="p-md font-body-md text-on-surface">Batch Upload</td><td class="p-md text-center"><span class="material-symbols-outlined text-on-surface-variant/30">close</span></td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td></tr>
+<tr class="hover:bg-white/5 transition-colors"><td class="p-md font-body-md text-on-surface">API Access</td><td class="p-md text-center"><span class="material-symbols-outlined text-on-surface-variant/30">close</span></td><td class="p-md text-center"><span class="material-symbols-outlined text-primary">check</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Who It's For</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">Design Resource Finder empowers creators, educators, and businesses at every level.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
+<div class="user-card glass-card p-md rounded-xl text-center reveal">
+<div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary text-2xl">brush</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Graphic Designers</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Analyze professional designs and expand your visual toolkit.</p>
+</div>
+<div class="user-card glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.08s">
+<div class="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-secondary text-2xl">school</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Students</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Learn design principles from real-world examples.</p>
+</div>
+<div class="user-card glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.16s">
+<div class="w-14 h-14 rounded-full bg-tertiary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-tertiary text-2xl">campaign</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Marketing Teams</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Improve campaign visuals with data-driven insights.</p>
+</div>
+<div class="user-card glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.24s">
+<div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary text-2xl">devices</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">UI/UX Designers</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Study layouts, typography, and interaction patterns.</p>
+</div>
+<div class="user-card glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.32s">
+<div class="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-secondary text-2xl">smart_display</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Content Creators</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Create better social media posts and thumbnails.</p>
+</div>
+<div class="user-card glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.4s">
+<div class="w-14 h-14 rounded-full bg-tertiary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-tertiary text-2xl">print</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Printing Companies</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Review customer artwork before printing.</p>
+</div>
+<div class="user-card glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.48s">
+<div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-primary text-2xl">business</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Businesses</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Maintain consistent branding across all materials.</p>
+</div>
+<div class="user-card glass-card p-md rounded-xl text-center reveal" style="transition-delay:0.56s">
+<div class="w-14 h-14 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-sm">
+<span class="material-symbols-outlined text-secondary text-2xl">groups</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-sm mb-xs">Design Agencies</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Win pitches by deconstructing competitor designs.</p>
+</div>
+</div>
+</section>
+<section class="py-xl max-w-container-max mx-auto px-md">
+<div class="text-center mb-xl reveal">
+<h2 class="font-headline-lg text-headline-lg mb-sm">Coming Soon</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mx-auto">We're building the future of design analysis. Here's what's on the roadmap.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-md">
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal">
+<span class="material-symbols-outlined text-3xl text-primary mb-xs">brand_awareness</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">Brand Kit Detection</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.06s">
+<span class="material-symbols-outlined text-3xl text-secondary mb-xs">verified</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">Logo Quality Analysis</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.12s">
+<span class="material-symbols-outlined text-3xl text-tertiary mb-xs">auto_fix</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">AI Redesign Suggestions</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.18s">
+<span class="material-symbols-outlined text-3xl text-primary mb-xs">search_insights</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">Design Similarity Search</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.24s">
+<span class="material-symbols-outlined text-3xl text-secondary mb-xs">group</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">Team Collaboration</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.3s">
+<span class="material-symbols-outlined text-3xl text-tertiary mb-xs">extension</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">Browser Extension</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.36s">
+<span class="material-symbols-outlined text-3xl text-primary mb-xs">phone_iphone</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">Mobile App</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.42s">
+<span class="material-symbols-outlined text-3xl text-secondary mb-xs">draw</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">Figma Plugin</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.48s">
+<span class="material-symbols-outlined text-3xl text-tertiary mb-xs">design_services</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">Canva Plugin</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+<div class="glass-card p-md rounded-xl text-center opacity-70 hover:opacity-100 transition-all reveal" style="transition-delay:0.54s">
+<span class="material-symbols-outlined text-3xl text-primary mb-xs">api</span>
+<p class="font-body-md text-body-md text-on-surface text-sm">API Access</p>
+<span class="inline-block px-sm py-0.5 mt-xs rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm">Coming Soon</span>
+</div>
+</div>
+</section>
+<section class="py-xl relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/20 via-surface to-secondary-container/10"></div>
+<div class="relative z-10 max-w-container-max mx-auto px-md text-center">
+<h2 class="font-display-xl text-display-xl hero-gradient-text mb-sm reveal">Ready to Analyze Your First Design?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-lg reveal">
+Upload your first design and let AI uncover the fonts, colors, layouts, and creative decisions behind it in just a few seconds.
+</p>
+<div class="flex flex-col sm:flex-row gap-md justify-center reveal">
+<a href="<%= user ? '/upload' : '/auth/register' %>" class="cta-glow bg-primary-container text-on-primary-container font-bold px-xl py-md rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center gap-xs text-body-lg">
+<span class="material-symbols-outlined">auto_awesome</span> Start Free
+</a>
+<a href="#how-it-works" class="border border-white/15 bg-white/5 backdrop-blur-md text-on-surface font-bold px-xl py-md rounded-xl hover:bg-white/10 transition-all active:scale-95 text-body-lg flex items-center gap-xs">
+<span class="material-symbols-outlined">play_circle</span> View Demo
+</a>
+</div>
+</div>
+</section>
+</main>
+<%- include('partials/footer') %>
