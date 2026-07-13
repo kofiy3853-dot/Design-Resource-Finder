@@ -9,11 +9,16 @@ app.get('/test', async (req, res) => {
     const Analysis = require('./models/Analysis');
     const analysis = await Analysis.findById(27);
     console.log('Rendering with analysis:', !!analysis);
-    res.render('analysis', { 
-      title: 'Analysis Results', 
-      user: { id: 8, demo: false }, 
-      analysis, 
-      aiResult: !!(analysis?.fonts || analysis?.typography || analysis?.layout || analysis?.design_style)
+    res.render('analysis', {
+      title: 'Analysis Results',
+      user: { id: 8, demo: false },
+      analysis,
+      aiResult: !!(
+        analysis?.fonts ||
+        analysis?.typography ||
+        analysis?.layout ||
+        analysis?.design_style
+      ),
     });
   } catch (err) {
     console.error('Error:', err.message);

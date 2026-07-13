@@ -97,7 +97,9 @@
 
       if (file.type.match(/image\//)) {
         var reader = new FileReader();
-        reader.onload = function (e) { previewImage.src = e.target.result; };
+        reader.onload = function (e) {
+          previewImage.src = e.target.result;
+        };
         reader.readAsDataURL(file);
         previewImage.style.display = 'block';
         document.getElementById('pdfIcon').style.display = 'none';
@@ -136,15 +138,15 @@
     }
 
     function pollAnalysisProgress(analysisId) {
-      var interval = setInterval(async function() {
+      var interval = setInterval(async function () {
         try {
           var res = await fetch('/api/analysis/' + analysisId + '/progress');
           var data = await res.json();
-          
+
           if (data.status === 'completed') {
             clearInterval(interval);
             showToast('Analysis complete!');
-            setTimeout(function() {
+            setTimeout(function () {
               window.location.href = '/analysis/' + analysisId;
             }, 1000);
           } else if (data.status === 'failed') {
@@ -206,11 +208,17 @@
   if (typeof IntersectionObserver !== 'undefined') {
     var statsRow = document.querySelector('#dashStats');
     if (statsRow) {
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) { animateCounters(); observer.disconnect(); }
-        });
-      }, { threshold: 0.3 });
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              animateCounters();
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0.3 }
+      );
       observer.observe(statsRow);
     }
   } else {
@@ -223,7 +231,7 @@
 
   resourceTabs.forEach(function (tab) {
     tab.addEventListener('click', function () {
-      resourceTabs.forEach(function (t) { 
+      resourceTabs.forEach(function (t) {
         t.classList.remove('active');
         t.setAttribute('aria-selected', 'false');
       });
@@ -272,16 +280,30 @@
     var toast = document.createElement('div');
     toast.className = 'dash-toast';
     var icon = type === 'error' ? 'error' : type === 'loading' ? 'sync' : 'check_circle';
-    var color = type === 'error' ? '#EF4444' : type === 'loading' ? 'var(--primary)' : 'var(--success)';
+    var color =
+      type === 'error' ? '#EF4444' : type === 'loading' ? 'var(--primary)' : 'var(--success)';
     var spin = type === 'loading' ? ' style="animation: spin 1s linear infinite;"' : '';
-    toast.innerHTML = '<span class="toast-icon material-symbols-outlined"' + spin + ' style="color:' + color + '">' + icon + '</span>' + message;
+    toast.innerHTML =
+      '<span class="toast-icon material-symbols-outlined"' +
+      spin +
+      ' style="color:' +
+      color +
+      '">' +
+      icon +
+      '</span>' +
+      message;
     container.appendChild(toast);
-    setTimeout(function () {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(100px)';
-      toast.style.transition = 'all 0.3s ease';
-      setTimeout(function () { toast.remove(); }, 300);
-    }, type === 'loading' ? 10000 : 3000);
+    setTimeout(
+      function () {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(function () {
+          toast.remove();
+        }, 300);
+      },
+      type === 'loading' ? 10000 : 3000
+    );
   }
 
   // ===== RIPPLE EFFECT =====
@@ -291,11 +313,18 @@
       var x = e.clientX - rect.left;
       var y = e.clientY - rect.top;
       var ripple = document.createElement('span');
-      ripple.style.cssText = 'position:absolute;border-radius:50%;background:rgba(255,255,255,0.4);width:60px;height:60px;left:' + (x - 30) + 'px;top:' + (y - 30) + 'px;transform:scale(0);animation:ripple 0.6s ease-out;pointer-events:none';
+      ripple.style.cssText =
+        'position:absolute;border-radius:50%;background:rgba(255,255,255,0.4);width:60px;height:60px;left:' +
+        (x - 30) +
+        'px;top:' +
+        (y - 30) +
+        'px;transform:scale(0);animation:ripple 0.6s ease-out;pointer-events:none';
       btn.style.position = 'relative';
       btn.style.overflow = 'hidden';
       btn.appendChild(ripple);
-      setTimeout(function () { ripple.remove(); }, 600);
+      setTimeout(function () {
+        ripple.remove();
+      }, 600);
     });
   });
 

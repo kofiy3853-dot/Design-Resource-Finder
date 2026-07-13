@@ -3,7 +3,9 @@ const { randomBytes } = require('crypto');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
-  console.warn('WARNING: JWT_SECRET not set in environment. Generated a random ephemeral secret — all existing sessions will be invalidated on restart.');
+  console.warn(
+    'WARNING: JWT_SECRET not set in environment. Generated a random ephemeral secret — all existing sessions will be invalidated on restart.'
+  );
   console.warn('  Set JWT_SECRET in your .env file for persistent sessions.');
 }
 const jwtSecret = JWT_SECRET || randomBytes(64).toString('hex');

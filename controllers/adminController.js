@@ -105,7 +105,9 @@ exports.settings = async (req, res) => {
 
 exports.updateSettings = async (req, res) => {
   try {
-    const { error: validationError, value } = adminSettingsSchema.validate(req.body, { stripUnknown: true });
+    const { error: validationError, value } = adminSettingsSchema.validate(req.body, {
+      stripUnknown: true,
+    });
     if (validationError) {
       return res.status(400).json({ error: validationError.details[0].message });
     }

@@ -18,7 +18,7 @@ router.get('/analysis/:id/progress', authenticate, async (req, res) => {
   try {
     const job = await jobQueue.getJob(req.params.id);
     if (!job) return res.status(404).json({ error: 'Job not found' });
-    
+
     res.json({
       id: job.id,
       status: job.status,
@@ -52,10 +52,10 @@ router.get('/uploads/:id', authenticate, async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM uploads WHERE id = ?', [req.params.id]);
     if (!rows[0]) return res.status(404).json({ error: 'Not found' });
-    
+
     const filePath = path.join(__dirname, '..', 'public', rows[0].path);
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
-    
+
     res.sendFile(filePath);
   } catch (err) {
     console.error('Upload serve error:', err);

@@ -56,9 +56,9 @@ function validateAndParseJSON(content) {
       .replace(/^```\s*/, '')
       .replace(/\s*```$/, '')
       .trim();
-    
+
     const result = JSON.parse(cleaned);
-    
+
     // Validate required fields exist
     const required = ['fonts', 'typography', 'layout', 'design_style', 'confidence_score'];
     for (const field of required) {
@@ -67,12 +67,12 @@ function validateAndParseJSON(content) {
         return null;
       }
     }
-    
+
     // Clamp confidence score
     if (typeof result.confidence_score === 'number') {
       result.confidence_score = Math.max(0, Math.min(100, result.confidence_score));
     }
-    
+
     return result;
   } catch (err) {
     console.error('[AI] JSON parse/validation error:', err.message);
@@ -92,7 +92,7 @@ async function fetchWithRetry(url, options, retries = 2, delay = 1000) {
     } catch (err) {
       if (i === retries) throw err;
       console.log(`[AI] Retry ${i + 1}/${retries} after ${delay}ms:`, err.message);
-      await new Promise(r => setTimeout(r, delay));
+      await new Promise((r) => setTimeout(r, delay));
       delay *= 2;
     }
   }
@@ -275,12 +275,60 @@ function generateTestFallbackAnalysis() {
   // Test-only fallback - NOT used in production
   // Kept for development/testing purposes only
   const fontDatabase = [
-    { name: 'Inter', family: 'Sans-serif', category: 'Sans-serif', weight: '400', size: '16px', similar: ['SF Pro', 'Roboto', 'Helvetica Neue'], confidence: 92 },
-    { name: 'Inter', family: 'Sans-serif', category: 'Sans-serif', weight: '600', size: '20px', similar: ['SF Pro', 'Roboto'], confidence: 88 },
-    { name: 'Roboto', family: 'Sans-serif', category: 'Sans-serif', weight: '400', size: '14px', similar: ['Inter', 'Open Sans'], confidence: 85 },
-    { name: 'Montserrat', family: 'Sans-serif', category: 'Sans-serif', weight: '700', size: '32px', similar: ['Inter', 'Poppins'], confidence: 89 },
-    { name: 'Poppins', family: 'Sans-serif', category: 'Sans-serif', weight: '600', size: '24px', similar: ['Montserrat', 'Nunito'], confidence: 86 },
-    { name: 'JetBrains Mono', family: 'Monospace', category: 'Monospace', weight: '400', size: '14px', similar: ['Fira Code', 'Source Code Pro'], confidence: 89 },
+    {
+      name: 'Inter',
+      family: 'Sans-serif',
+      category: 'Sans-serif',
+      weight: '400',
+      size: '16px',
+      similar: ['SF Pro', 'Roboto', 'Helvetica Neue'],
+      confidence: 92,
+    },
+    {
+      name: 'Inter',
+      family: 'Sans-serif',
+      category: 'Sans-serif',
+      weight: '600',
+      size: '20px',
+      similar: ['SF Pro', 'Roboto'],
+      confidence: 88,
+    },
+    {
+      name: 'Roboto',
+      family: 'Sans-serif',
+      category: 'Sans-serif',
+      weight: '400',
+      size: '14px',
+      similar: ['Inter', 'Open Sans'],
+      confidence: 85,
+    },
+    {
+      name: 'Montserrat',
+      family: 'Sans-serif',
+      category: 'Sans-serif',
+      weight: '700',
+      size: '32px',
+      similar: ['Inter', 'Poppins'],
+      confidence: 89,
+    },
+    {
+      name: 'Poppins',
+      family: 'Sans-serif',
+      category: 'Sans-serif',
+      weight: '600',
+      size: '24px',
+      similar: ['Montserrat', 'Nunito'],
+      confidence: 86,
+    },
+    {
+      name: 'JetBrains Mono',
+      family: 'Monospace',
+      category: 'Monospace',
+      weight: '400',
+      size: '14px',
+      similar: ['Fira Code', 'Source Code Pro'],
+      confidence: 89,
+    },
   ];
 
   const shuffled = [...fontDatabase].sort(() => Math.random() - 0.5);
@@ -289,15 +337,54 @@ function generateTestFallbackAnalysis() {
 
   return {
     fonts: selectedFonts,
-    typography: { hierarchy: 'Test hierarchy', alignment: 'Test alignment', letter_spacing: 'Test', line_height: 'Test', font_pairing: 'Test', readability: 'Test', visual_balance: 'Test' },
-    layout: { grid_structure: 'Test', margins: 'Test', padding: 'Test', white_space: 'Test', visual_hierarchy: 'Test', reading_flow: 'Test', balance: 'Test', symmetry: 'Test' },
+    typography: {
+      hierarchy: 'Test hierarchy',
+      alignment: 'Test alignment',
+      letter_spacing: 'Test',
+      line_height: 'Test',
+      font_pairing: 'Test',
+      readability: 'Test',
+      visual_balance: 'Test',
+    },
+    layout: {
+      grid_structure: 'Test',
+      margins: 'Test',
+      padding: 'Test',
+      white_space: 'Test',
+      visual_hierarchy: 'Test',
+      reading_flow: 'Test',
+      balance: 'Test',
+      symmetry: 'Test',
+    },
     background: { type: 'Test', colors: ['#131313'], effects: [], style: 'Test' },
     shapes: ['Test'],
     objects: ['Test'],
-    design_style: { Minimal: 85, Corporate: 70, Luxury: 45, Modern: 90, Creative: 60, Editorial: 40, Tech: 75, Vintage: 10 },
-    accessibility: { contrast_ratio: '7.5:1', readability: 'Test', font_sizes: 'Test', recommendations: [], wcag_considerations: [] },
+    design_style: {
+      Minimal: 85,
+      Corporate: 70,
+      Luxury: 45,
+      Modern: 90,
+      Creative: 60,
+      Editorial: 40,
+      Tech: 75,
+      Vintage: 10,
+    },
+    accessibility: {
+      contrast_ratio: '7.5:1',
+      readability: 'Test',
+      font_sizes: 'Test',
+      recommendations: [],
+      wcag_considerations: [],
+    },
     ai_explanation: 'Test explanation - AI unavailable',
-    resource_recommendations: { fonts: ['Inter'], colors: ['#131313'], icons: [], stock_photos: [], illustrations: [], patterns: [] },
+    resource_recommendations: {
+      fonts: ['Inter'],
+      colors: ['#131313'],
+      icons: [],
+      stock_photos: [],
+      illustrations: [],
+      patterns: [],
+    },
     prompts: { dalle: 'Test', midjourney: 'Test', stable_diffusion: 'Test', adobe_firefly: 'Test' },
     recreation_guides: { canva: 'Test', figma: 'Test', photoshop: 'Test', illustrator: 'Test' },
     confidence_score: 0,

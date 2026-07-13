@@ -42,13 +42,14 @@ exports.processAnalysis = async (analysisId, reportProgress = null) => {
     console.log(`[Analysis] Starting color and AI analysis...`);
     const [colorResult, aiResult] = await Promise.allSettled([
       colorAnalyzer.extractColors(filePath),
-      aiService.analyzeDesign(filePath).then(result => {
+      aiService.analyzeDesign(filePath).then((result) => {
         if (reportProgress) reportProgress(70, 'ai_analysis');
         return result;
       }),
     ]);
 
-    const colors = colorResult.status === 'fulfilled' ? colorResult.value : { colors: [], palette: {} };
+    const colors =
+      colorResult.status === 'fulfilled' ? colorResult.value : { colors: [], palette: {} };
     const ai = aiResult.status === 'fulfilled' ? aiResult.value : null;
 
     console.log(`[Analysis] Color analysis completed for ${analysisId}`);
@@ -104,7 +105,8 @@ exports.processAnalysis = async (analysisId, reportProgress = null) => {
       updatedData.objects = null;
       updatedData.design_style = null;
       updatedData.accessibility = null;
-      updatedData.ai_explanation = 'AI analysis unavailable - showing color analysis only. Configure OpenRouter or OpenAI API keys for full analysis.';
+      updatedData.ai_explanation =
+        'AI analysis unavailable - showing color analysis only. Configure OpenRouter or OpenAI API keys for full analysis.';
       updatedData.resource_recommendations = null;
       updatedData.prompts = null;
       updatedData.recreation_guides = null;

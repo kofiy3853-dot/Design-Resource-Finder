@@ -24,18 +24,15 @@ class JobQueue extends EventEmitter {
   async updateProgress(jobId, progress, step = null) {
     const updates = ['progress = ?', 'updated_at = NOW()'];
     const params = [Math.max(0, Math.min(100, progress))];
-    
+
     if (step) {
       updates.push('current_step = ?');
       params.push(step);
     }
-    
+
     params.push(jobId);
-    await pool.query(
-      `UPDATE job_queue SET ${updates.join(', ')} WHERE id = ?`,
-      params
-    );
-    
+    await pool.query(`UPDATE job_queue SET ${updates.join(', ')} WHERE id = ?`, params);
+
     this.emit('progress', { jobId, progress, step });
   }
 
@@ -55,10 +52,10 @@ class JobQueue extends EventEmitter {
     this.processing.add(job.id);
 
     try {
-      await pool.query(
-        'UPDATE job_queue SET status = ?, started_at = NOW() WHERE id = ?',
-        ['processing', job.id]
-      );
+      await pool.query('UPDATE job_queue SET status = ?, started_at = NOW() WHERE id = ?', [
+        'processing',
+        job.id,
+      ]);
 
       const handler = this.handlers.get(job.type);
       if (!handler) {
@@ -98,7 +95,7 @@ class JobQueue extends EventEmitter {
   startPolling(intervalMs = 1000) {
     if (this.pollInterval) return;
     this.pollInterval = setInterval(() => {
-      this.processNext().catch(err => {
+      this.processNext().catch((err) => {
         console.error('[JobQueue] Poll error:', err.message);
       });
     }, intervalMs);

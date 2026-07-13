@@ -54,11 +54,21 @@ exports.analysis = async (req, res) => {
         .status(403)
         .render('error', { title: 'Forbidden', message: 'Access denied', user: req.user });
     }
-    
+
     // Check if AI data exists
-    const hasAiData = !!(analysis.fonts || analysis.typography || analysis.layout || analysis.design_style);
-    
-    res.render('analysis', { title: 'Analysis Results', user: req.user, analysis, aiResult: hasAiData });
+    const hasAiData = !!(
+      analysis.fonts ||
+      analysis.typography ||
+      analysis.layout ||
+      analysis.design_style
+    );
+
+    res.render('analysis', {
+      title: 'Analysis Results',
+      user: req.user,
+      analysis,
+      aiResult: hasAiData,
+    });
   } catch (err) {
     console.error('Analysis error:', err);
     res
@@ -179,7 +189,8 @@ exports.historyV2 = async (req, res) => {
   try {
     let analyses = [];
     const [rows] = await pool.query(
-      'SELECT a.*, u.filename, u.original_name FROM analyses a LEFT JOIN uploads u ON a.upload_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC LIMIT 50', [req.user.id]
+      'SELECT a.*, u.filename, u.original_name FROM analyses a LEFT JOIN uploads u ON a.upload_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC LIMIT 50',
+      [req.user.id]
     );
     analyses = rows;
 
@@ -190,7 +201,9 @@ exports.historyV2 = async (req, res) => {
     });
   } catch (err) {
     console.error('History v2 error:', err);
-    res.status(500).render('error', { title: 'Error', message: 'Failed to load history', user: req.user });
+    res
+      .status(500)
+      .render('error', { title: 'Error', message: 'Failed to load history', user: req.user });
   }
 };
 
@@ -219,22 +232,33 @@ exports.dashboardV2 = async (req, res) => {
 
     const userId = req.user.id;
     const [analyses] = await pool.query(
-      'SELECT a.*, u.filename, u.original_name FROM analyses a LEFT JOIN uploads u ON a.upload_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC LIMIT 8', [userId]
+      'SELECT a.*, u.filename, u.original_name FROM analyses a LEFT JOIN uploads u ON a.upload_id = u.id WHERE a.user_id = ? ORDER BY a.created_at DESC LIMIT 8',
+      [userId]
     );
     const [rows] = await pool.query(
-      'SELECT (SELECT COUNT(*) FROM analyses WHERE user_id = ?) as total_analyses, (SELECT COUNT(*) FROM saved_items WHERE user_id = ?) as total_saved, (SELECT COUNT(*) FROM reports WHERE user_id = ?) as total_reports', [userId, userId, userId]
+      'SELECT (SELECT COUNT(*) FROM analyses WHERE user_id = ?) as total_analyses, (SELECT COUNT(*) FROM saved_items WHERE user_id = ?) as total_saved, (SELECT COUNT(*) FROM reports WHERE user_id = ?) as total_reports',
+      [userId, userId, userId]
     );
     data.stats = rows[0] || data.stats;
-    const [completed] = await pool.query('SELECT COUNT(*) as count FROM analyses WHERE user_id = ? AND status = ?', [userId, 'completed']);
-    const [processing] = await pool.query('SELECT COUNT(*) as count FROM analyses WHERE user_id = ? AND status = ?', [userId, 'processing']);
-    const [monthly] = await pool.query('SELECT COUNT(*) as count FROM analyses WHERE user_id = ? AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())', [userId]);
+    const [completed] = await pool.query(
+      'SELECT COUNT(*) as count FROM analyses WHERE user_id = ? AND status = ?',
+      [userId, 'completed']
+    );
+    const [processing] = await pool.query(
+      'SELECT COUNT(*) as count FROM analyses WHERE user_id = ? AND status = ?',
+      [userId, 'processing']
+    );
+    const [monthly] = await pool.query(
+      'SELECT COUNT(*) as count FROM analyses WHERE user_id = ? AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())',
+      [userId]
+    );
     data.analyses = analyses;
     data.completedCount = completed[0]?.count || 0;
     data.processingCount = processing[0]?.count || 0;
     data.total = monthly[0]?.count || 0;
 
     if (analyses.length > 0) {
-      const latestCompleted = analyses.find(a => a.status === 'completed');
+      const latestCompleted = analyses.find((a) => a.status === 'completed');
       if (latestCompleted) {
         data.recentAnalysis = latestCompleted;
         const analysisData = extractDashboardData(latestCompleted);
@@ -245,7 +269,9 @@ exports.dashboardV2 = async (req, res) => {
     res.render('dashboard-v2', data);
   } catch (err) {
     console.error('Dashboard v2 error:', err);
-    res.status(500).render('error', { title: 'Error', message: 'Failed to load dashboard', user: req.user });
+    res
+      .status(500)
+      .render('error', { title: 'Error', message: 'Failed to load dashboard', user: req.user });
   }
 };
 
@@ -265,7 +291,7 @@ function extractDashboardData(analysis) {
 
   if (analysis.fonts && Array.isArray(analysis.fonts)) {
     data.fontsFound = analysis.fonts.length;
-    data.fonts = analysis.fonts.slice(0, 3).map(f => ({
+    data.fonts = analysis.fonts.slice(0, 3).map((f) => ({
       name: f.name,
       family: f.family,
       category: f.category,
@@ -279,7 +305,7 @@ function extractDashboardData(analysis) {
   if (analysis.colors) {
     if (analysis.colors.extracted && Array.isArray(analysis.colors.extracted)) {
       data.colorsExtracted = analysis.colors.extracted.length;
-      data.colorPalette = analysis.colors.extracted.slice(0, 6).map(c => ({
+      data.colorPalette = analysis.colors.extracted.slice(0, 6).map((c) => ({
         hex: c.hex,
         rgb: c.rgb,
         hsl: c.hsl,
@@ -294,18 +320,45 @@ function extractDashboardData(analysis) {
         ...(palette.secondary || []),
         ...(palette.accent || []),
       ];
-      data.colorPalette = allColors.slice(0, 6).map(hex => ({ hex }));
+      data.colorPalette = allColors.slice(0, 6).map((hex) => ({ hex }));
     }
   }
 
   if (analysis.resource_recommendations) {
     const recs = analysis.resource_recommendations;
-    data.resourcesFound = (recs.fonts?.length || 0) + (recs.colors?.length || 0) + (recs.icons?.length || 0) + (recs.stock_photos?.length || 0) + (recs.illustrations?.length || 0) + (recs.patterns?.length || 0);
+    data.resourcesFound =
+      (recs.fonts?.length || 0) +
+      (recs.colors?.length || 0) +
+      (recs.icons?.length || 0) +
+      (recs.stock_photos?.length || 0) +
+      (recs.illustrations?.length || 0) +
+      (recs.patterns?.length || 0);
 
     data.resources = [
-      ...(recs.icons?.slice(0, 2).map((name, i) => ({ name, category: 'icons', source: 'Icon Library', preview: 'emoji_people' })) || []),
-      ...(recs.illustrations?.slice(0, 2).map((name, i) => ({ name, category: 'illustrations', source: 'Illustration Library', preview: 'landscape' })) || []),
-      ...(recs.patterns?.slice(0, 2).map((name, i) => ({ name, category: 'vectors', source: 'Vector Library', preview: 'shapes' })) || []),
+      ...(recs.icons
+        ?.slice(0, 2)
+        .map((name, i) => ({
+          name,
+          category: 'icons',
+          source: 'Icon Library',
+          preview: 'emoji_people',
+        })) || []),
+      ...(recs.illustrations
+        ?.slice(0, 2)
+        .map((name, i) => ({
+          name,
+          category: 'illustrations',
+          source: 'Illustration Library',
+          preview: 'landscape',
+        })) || []),
+      ...(recs.patterns
+        ?.slice(0, 2)
+        .map((name, i) => ({
+          name,
+          category: 'vectors',
+          source: 'Vector Library',
+          preview: 'shapes',
+        })) || []),
     ].slice(0, 6);
   }
 
@@ -379,7 +432,10 @@ exports.resources = (req, res) => {
 };
 
 exports.bgGenerator = (req, res) => {
-  res.render('bg-generator', { title: 'AI Background Generator - Design Resource Finder', user: req.user });
+  res.render('bg-generator', {
+    title: 'AI Background Generator - Design Resource Finder',
+    user: req.user,
+  });
 };
 
 exports.help = (req, res) => {

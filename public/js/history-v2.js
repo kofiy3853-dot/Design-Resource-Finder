@@ -5,14 +5,16 @@
   var serverData = { analyses: window.historyAnalyses || [] };
 
   // Transform server data to card format
-  var transformedCards = serverData.analyses.map(function(a) {
+  var transformedCards = serverData.analyses.map(function (a) {
     var colors = [];
     var fontCount = 0;
     var assetCount = 0;
-    
+
     if (a.colors) {
       if (a.colors.extracted && a.colors.extracted.length) {
-        colors = a.colors.extracted.map(function(c) { return c.hex; });
+        colors = a.colors.extracted.map(function (c) {
+          return c.hex;
+        });
       } else if (a.colors.palette) {
         colors = [].concat(
           a.colors.palette.background || [],
@@ -22,32 +24,36 @@
         );
       }
     }
-    
+
     if (a.fonts && a.fonts.length) {
       fontCount = a.fonts.length;
     }
-    
+
     if (a.resource_recommendations) {
       var recs = a.resource_recommendations;
-      assetCount = (recs.fonts?.length || 0) + (recs.colors?.length || 0) + 
-                   (recs.icons?.length || 0) + (recs.stock_photos?.length || 0) + 
-                   (recs.illustrations?.length || 0) + (recs.patterns?.length || 0);
+      assetCount =
+        (recs.fonts?.length || 0) +
+        (recs.colors?.length || 0) +
+        (recs.icons?.length || 0) +
+        (recs.stock_photos?.length || 0) +
+        (recs.illustrations?.length || 0) +
+        (recs.patterns?.length || 0);
     }
 
     // Determine category from design style
     var category = 'banners';
     if (a.design_style) {
-      var topStyle = Object.entries(a.design_style).sort((a,b) => b[1] - a[1])[0];
+      var topStyle = Object.entries(a.design_style).sort((a, b) => b[1] - a[1])[0];
       if (topStyle) {
         var styleMap = {
-          'Tech': 'ui',
-          'Modern': 'ui',
-          'Minimal': 'ui',
-          'Corporate': 'web',
-          'Creative': 'illustrations',
-          'Luxury': 'logos',
-          'Editorial': 'web',
-          'Vintage': 'illustrations'
+          Tech: 'ui',
+          Modern: 'ui',
+          Minimal: 'ui',
+          Corporate: 'web',
+          Creative: 'illustrations',
+          Luxury: 'logos',
+          Editorial: 'web',
+          Vintage: 'illustrations',
         };
         category = styleMap[topStyle[0]] || 'banners';
       }
@@ -57,13 +63,17 @@
       id: a.id,
       title: a.title,
       category: category,
-      date: new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      date: new Date(a.created_at).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }),
       match: a.confidence_score || 85,
       colors: colors.slice(0, 6),
       fonts: fontCount,
       assets: assetCount,
       status: a.status || 'completed',
-      upload_id: a.upload_id || null
+      upload_id: a.upload_id || null,
     };
   });
 
@@ -94,7 +104,7 @@
       paginationSection.style.display = 'none';
       return;
     }
-    
+
     if (!append) {
       historyGrid.innerHTML = '';
     }
@@ -119,7 +129,10 @@
         var match = card.title.toLowerCase().indexOf(q) !== -1;
         if (!match) {
           for (var i = 0; i < card.colors.length; i++) {
-            if (card.colors[i].toLowerCase().indexOf(q) !== -1) { match = true; break; }
+            if (card.colors[i].toLowerCase().indexOf(q) !== -1) {
+              match = true;
+              break;
+            }
           }
         }
         if (!match && card.category.indexOf(q) !== -1) match = true;
@@ -139,7 +152,7 @@
       completed: { color: 'rgba(16,185,129,0.9)', icon: 'check_circle' },
       processing: { color: 'rgba(245,158,11,0.9)', icon: 'progress_activity' },
       failed: { color: 'rgba(239,68,68,0.9)', icon: 'error' },
-      pending: { color: 'rgba(99,102,241,0.9)', icon: 'schedule' }
+      pending: { color: 'rgba(99,102,241,0.9)', icon: 'schedule' },
     };
     var status = statusConfig[card.status] || statusConfig.completed;
 
@@ -153,41 +166,66 @@
     }
 
     // Build image HTML
-    var imageHtml = '';
+    var imageHtml;
     if (card.upload_id) {
-      imageHtml = '<img src="/api/uploads/' + card.upload_id + '" alt="' + escapeHtml(card.title) + '" class="w-full h-full object-cover">';
+      imageHtml =
+        '<img src="/api/uploads/' +
+        card.upload_id +
+        '" alt="' +
+        escapeHtml(card.title) +
+        '" class="w-full h-full object-cover">';
     } else {
       imageHtml = '<span class="placeholder-icon material-symbols-outlined">image</span>';
     }
 
-    cardEl.innerHTML = 
-      '<button class="history-card-delete" data-id="' + card.id + '" aria-label="Delete"><span class="material-symbols-outlined">close</span></button>' +
+    cardEl.innerHTML =
+      '<button class="history-card-delete" data-id="' +
+      card.id +
+      '" aria-label="Delete"><span class="material-symbols-outlined">close</span></button>' +
       '<div class="history-card-image">' +
-        imageHtml +
-        '<div class="history-card-badge" style="background:' + status.color + '">' +
-          '<span class="material-symbols-outlined">' + status.icon + '</span>' +
-          '<span style="text-transform:capitalize;">' + card.status + '</span>' +
-        '</div>' +
+      imageHtml +
+      '<div class="history-card-badge" style="background:' +
+      status.color +
+      '">' +
+      '<span class="material-symbols-outlined">' +
+      status.icon +
+      '</span>' +
+      '<span style="text-transform:capitalize;">' +
+      card.status +
+      '</span>' +
+      '</div>' +
       '</div>' +
       '<div class="history-card-body">' +
-        '<h3>' + escapeHtml(card.title) + '</h3>' +
-        '<div class="date">' + card.date + '</div>' +
-        '<div class="history-color-strip">' + colorsHtml + '</div>' +
-        '<div class="history-card-stats">' +
-          '<div class="stat"><span class="material-symbols-outlined">text_fields</span> ' + card.fonts + ' fonts</div>' +
-          '<div class="stat"><span class="material-symbols-outlined">inventory_2</span> ' + card.assets + ' assets</div>' +
-          '<div class="stat"><span class="material-symbols-outlined">stars</span> ' + card.match + '% match</div>' +
-        '</div>' +
+      '<h3>' +
+      escapeHtml(card.title) +
+      '</h3>' +
+      '<div class="date">' +
+      card.date +
+      '</div>' +
+      '<div class="history-color-strip">' +
+      colorsHtml +
+      '</div>' +
+      '<div class="history-card-stats">' +
+      '<div class="stat"><span class="material-symbols-outlined">text_fields</span> ' +
+      card.fonts +
+      ' fonts</div>' +
+      '<div class="stat"><span class="material-symbols-outlined">inventory_2</span> ' +
+      card.assets +
+      ' assets</div>' +
+      '<div class="stat"><span class="material-symbols-outlined">stars</span> ' +
+      card.match +
+      '% match</div>' +
+      '</div>' +
       '</div>';
 
     // Delete handler
-    cardEl.querySelector('.history-card-delete').addEventListener('click', function(e) {
+    cardEl.querySelector('.history-card-delete').addEventListener('click', function (e) {
       e.stopPropagation();
       deleteCard(card.id);
     });
 
     // Click to view
-    cardEl.addEventListener('click', function() {
+    cardEl.addEventListener('click', function () {
       window.location.href = '/analysis/' + card.id;
     });
 
@@ -195,7 +233,9 @@
   }
 
   function deleteCard(id) {
-    allCards = allCards.filter(function (c) { return c.id !== id; });
+    allCards = allCards.filter(function (c) {
+      return c.id !== id;
+    });
     renderCards(false);
     showToast('Analysis removed from history');
   }
@@ -224,7 +264,9 @@
 
   categoryPills.forEach(function (pill) {
     pill.addEventListener('click', function () {
-      categoryPills.forEach(function (p) { p.classList.remove('active'); });
+      categoryPills.forEach(function (p) {
+        p.classList.remove('active');
+      });
       pill.classList.add('active');
       currentCategory = pill.getAttribute('data-category');
       currentPage = 0;
@@ -254,7 +296,9 @@
 
   document.querySelectorAll('.dash-nav-item').forEach(function (item) {
     item.addEventListener('click', function () {
-      document.querySelectorAll('.dash-nav-item').forEach(function (n) { n.classList.remove('active'); });
+      document.querySelectorAll('.dash-nav-item').forEach(function (n) {
+        n.classList.remove('active');
+      });
       item.classList.add('active');
       var route = item.getAttribute('data-route');
       if (route) window.location.href = '/' + route;
@@ -288,13 +332,21 @@
     toast.className = 'toast';
     var icon = type === 'error' ? 'error' : 'check_circle';
     var color = type === 'error' ? '#EF4444' : '#10B981';
-    toast.innerHTML = '<span class="toast-icon material-symbols-outlined" style="color:' + color + '">' + icon + '</span>' + message;
+    toast.innerHTML =
+      '<span class="toast-icon material-symbols-outlined" style="color:' +
+      color +
+      '">' +
+      icon +
+      '</span>' +
+      message;
     container.appendChild(toast);
     setTimeout(function () {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(100px)';
       toast.style.transition = 'all 0.3s ease';
-      setTimeout(function () { toast.remove(); }, 300);
+      setTimeout(function () {
+        toast.remove();
+      }, 300);
     }, 3000);
   }
   window.showToast = showToast;

@@ -16,4 +16,7 @@ async function createTable() {
   process.exit(0);
 }
 
-createTable().catch(e => { console.error(e); process.exit(1); });
+createTable().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

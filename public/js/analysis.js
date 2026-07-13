@@ -75,7 +75,9 @@ function copyText(t) {
 }
 
 function copyCSSVariables(colors) {
-  const css = colors.map(c => `--color-${c.name || c.hex.replace('#', '')}: ${c.hex};`).join('\n');
+  const css = colors
+    .map((c) => `--color-${c.name || c.hex.replace('#', '')}: ${c.hex};`)
+    .join('\n');
   navigator.clipboard
     .writeText(':root {\n' + css + '\n}')
     .then(() => showToast('CSS variables copied'))
@@ -83,7 +85,9 @@ function copyCSSVariables(colors) {
 }
 
 function copyTailwindConfig(colors) {
-  const config = colors.map(c => `  '${c.name || c.hex.replace('#', '')}': '${c.hex}',`).join('\n');
+  const config = colors
+    .map((c) => `  '${c.name || c.hex.replace('#', '')}': '${c.hex}',`)
+    .join('\n');
   const output = `module.exports = {\n  theme: {\n    extend: {\n      colors: {\n${config}\n      },\n    },\n  },\n};`;
   navigator.clipboard
     .writeText(output)
@@ -121,7 +125,8 @@ document.addEventListener('keydown', (e) => {
     const index = tabs.indexOf(e.target);
     let newIndex = index;
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') newIndex = (index + 1) % tabs.length;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') newIndex = (index - 1 + tabs.length) % tabs.length;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp')
+      newIndex = (index - 1 + tabs.length) % tabs.length;
     if (e.key === 'Home') newIndex = 0;
     if (e.key === 'End') newIndex = tabs.length - 1;
     if (newIndex !== index) {

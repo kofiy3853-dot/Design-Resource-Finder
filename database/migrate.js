@@ -7,7 +7,9 @@ const MIGRATIONS_TABLE = '_migrations';
 const DB_NAME = process.env.DB_NAME || 'design_resource_finder';
 
 async function ensureDatabase(conn) {
-  await conn.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+  await conn.query(
+    `CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+  );
   await conn.query(`USE \`${DB_NAME}\``);
 }
 
@@ -22,10 +24,8 @@ async function ensureMigrationsTable(conn) {
 }
 
 async function getAppliedMigrations(conn) {
-  const [rows] = await conn.query(
-    `SELECT name FROM \`${MIGRATIONS_TABLE}\` ORDER BY name ASC`
-  );
-  return new Set(rows.map(r => r.name));
+  const [rows] = await conn.query(`SELECT name FROM \`${MIGRATIONS_TABLE}\` ORDER BY name ASC`);
+  return new Set(rows.map((r) => r.name));
 }
 
 async function run() {
@@ -43,8 +43,9 @@ async function run() {
     const applied = await getAppliedMigrations(connection);
 
     const migrationsDir = path.join(__dirname, 'migrations');
-    const files = fs.readdirSync(migrationsDir)
-      .filter(f => f.endsWith('.sql'))
+    const files = fs
+      .readdirSync(migrationsDir)
+      .filter((f) => f.endsWith('.sql'))
       .sort();
 
     let count = 0;
@@ -60,10 +61,7 @@ async function run() {
 
       try {
         await connection.query(sql);
-        await connection.query(
-          `INSERT INTO \`${MIGRATIONS_TABLE}\` (name) VALUES (?)`,
-          [file]
-        );
+        await connection.query(`INSERT INTO \`${MIGRATIONS_TABLE}\` (name) VALUES (?)`, [file]);
         console.log(`  DONE ${file}`);
         count++;
       } catch (err) {

@@ -2,7 +2,6 @@ const pool = require('../config/database');
 const errorFormatter = require('../utils/errorFormatter');
 const validators = require('../utils/validators');
 const jobQueue = require('../utils/jobQueue');
-const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -67,12 +66,33 @@ exports.uploadFile = async (req, res) => {
     // If we have a cached analysis, copy results
     let analysisId;
     if (cachedAnalysisId) {
-      const [cachedAnalysis] = await pool.query('SELECT * FROM analyses WHERE id = ?', [cachedAnalysisId]);
+      const [cachedAnalysis] = await pool.query('SELECT * FROM analyses WHERE id = ?', [
+        cachedAnalysisId,
+      ]);
       if (cachedAnalysis.length > 0) {
         const ca = cachedAnalysis[0];
         const [result2] = await pool.query(
           'INSERT INTO analyses (user_id, upload_id, title, status, fonts, colors, typography, layout, background, shapes, objects, design_style, accessibility, ai_explanation, resource_recommendations, prompts, recreation_guides, confidence_score) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          [req.user.id, result.insertId, ca.title, 'completed', ca.fonts, ca.colors, ca.typography, ca.layout, ca.background, ca.shapes, ca.objects, ca.design_style, ca.accessibility, ca.ai_explanation, ca.resource_recommendations, ca.prompts, ca.recreation_guides, ca.confidence_score]
+          [
+            req.user.id,
+            result.insertId,
+            ca.title,
+            'completed',
+            ca.fonts,
+            ca.colors,
+            ca.typography,
+            ca.layout,
+            ca.background,
+            ca.shapes,
+            ca.objects,
+            ca.design_style,
+            ca.accessibility,
+            ca.ai_explanation,
+            ca.resource_recommendations,
+            ca.prompts,
+            ca.recreation_guides,
+            ca.confidence_score,
+          ]
         );
         analysisId = result2.insertId;
         console.log(`[Upload] Created analysis from cache: ${analysisId}`);
