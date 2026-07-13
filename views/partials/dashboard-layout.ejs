@@ -1,0 +1,52 @@
+<div class="dash-sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="dash-layout">
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="dash-sidebar-header">
+      <div class="dash-sidebar-logo"><span class="material-symbols-outlined">auto_awesome</span></div>
+      <div class="dash-sidebar-brand">
+        <h3>Design Resource Finder</h3>
+        <p>Dashboard</p>
+      </div>
+    </div>
+    <nav class="dash-sidebar-nav">
+      <ul>
+        <li class="dash-nav-label">Main</li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? ' active' : '' %>" href="/dashboard"><span class="material-symbols-outlined">dashboard</span> Dashboard</a></li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'upload' ? ' active' : '' %>" href="/upload"><span class="material-symbols-outlined">upload_file</span> Upload Design</a></li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'history' ? ' active' : '' %>" href="/history"><span class="material-symbols-outlined">history</span> History</a></li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'projects' ? ' active' : '' %>" href="/projects"><span class="material-symbols-outlined">folder</span> Projects</a></li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'favorites' ? ' active' : '' %>" href="/favorites"><span class="material-symbols-outlined">favorite</span> Favorites</a></li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'bg-generator' ? ' active' : '' %>" href="/bg-generator"><span class="material-symbols-outlined">auto_fix_high</span> AI Background Generator</a></li>
+        <li class="dash-nav-label">Resources</li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'resources' ? ' active' : '' %>" href="/resources"><span class="material-symbols-outlined">grid_view</span> Resources</a></li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'pricing' ? ' active' : '' %>" href="/pricing"><span class="material-symbols-outlined">sell</span> Pricing</a></li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'settings' ? ' active' : '' %>" href="/settings"><span class="material-symbols-outlined">settings</span> Settings</a></li>
+        <li><a class="dash-nav-item<%= typeof activePage !== 'undefined' && activePage === 'help' ? ' active' : '' %>" href="/help"><span class="material-symbols-outlined">help</span> Help & Support</a></li>
+      </ul>
+    </nav>
+    <div class="dash-sidebar-footer">
+      <div class="dash-upgrade-card">
+        <h4>Upgrade to Pro</h4>
+        <p>Unlock unlimited analyses</p>
+        <a href="/pricing" class="dash-upgrade-btn dash-ripple">Upgrade Now</a>
+      </div>
+      <div class="dash-user-card">
+        <div class="dash-avatar"><%= user?.name ? user.name.charAt(0).toUpperCase() : 'U' %></div>
+        <div class="dash-user-info">
+          <h4><%= user?.name || 'User' %></h4>
+          <p><%= user?.email || 'user@example.com' %></p>
+        </div>
+        <span class="material-symbols-outlined dash-user-toggle" id="userMenuToggle">expand_more</span>
+        <div class="dash-user-dropdown" id="userDropdown">
+          <a href="/profile">Profile</a>
+          <a href="/settings">Settings</a>
+          <a href="/achievements">Achievements</a>
+          <a href="/auth/logout" class="dash-logout">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+    <div class="dash-content">

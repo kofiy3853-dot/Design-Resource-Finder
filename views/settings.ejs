@@ -1,22 +1,40 @@
-<%- include('partials/header') %>
-<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
-<div class="max-w-2xl mx-auto">
-<h1 class="font-headline-lg text-headline-lg mb-xl">Settings</h1>
-<div class="glass-card p-lg rounded-xl mb-lg">
-<h2 class="font-headline-sm text-headline-sm mb-md">Preferences</h2>
-<p class="font-body-md text-body-md text-on-surface-variant mb-md">Settings management coming soon. You'll be able to update your profile, change password, and configure notifications here.</p>
-<div class="flex flex-col gap-md">
-<div class="flex items-center justify-between p-md bg-surface-container-high rounded-lg">
-<div><p class="font-body-md text-body-md text-on-surface">Email Notifications</p><p class="font-label-sm text-label-sm text-on-surface-variant">Receive analysis complete alerts</p></div>
-<div class="w-12 h-6 bg-primary/30 rounded-full relative cursor-pointer"><div class="w-5 h-5 bg-primary rounded-full absolute top-0.5 right-0.5"></div></div>
+<%- include('partials/header-app') %>
+<%- include('partials/dashboard-layout') %>
+
+<div class="dash-page-header">
+  <h1>Settings</h1>
+  <p>Manage your account preferences</p>
 </div>
-<div class="flex items-center justify-between p-md bg-surface-container-high rounded-lg">
-<div><p class="font-body-md text-body-md text-on-surface">Dark Mode</p><p class="font-label-sm text-label-sm text-on-surface-variant">Always on (dark mode only)</p></div>
-<div class="w-12 h-6 bg-primary rounded-full relative cursor-pointer"><div class="w-5 h-5 bg-white rounded-full absolute top-0.5 right-0.5"></div></div>
+
+<div style="max-width:640px">
+  <div class="dash-card" style="margin-bottom:16px">
+    <h3 style="font-size:16px;font-weight:600;color:var(--on-surface);margin-bottom:16px">Preferences</h3>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px">Settings management coming soon. You'll be able to update your profile, change password, and configure notifications here.</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--surface-container-high);border-radius:8px">
+        <div>
+          <p style="font-size:14px;font-weight:500;color:var(--on-surface)">Email Notifications</p>
+          <p style="font-size:12px;color:var(--text-secondary)">Receive analysis complete alerts</p>
+        </div>
+        <div style="width:48px;height:24px;background:rgba(124,58,237,0.3);border-radius:12px;position:relative;cursor:pointer">
+          <div style="width:20px;height:20px;background:var(--primary);border-radius:50%;position:absolute;top:2px;right:2px"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--surface-container-high);border-radius:8px">
+        <div>
+          <p style="font-size:14px;font-weight:500;color:var(--on-surface)">Dark Mode</p>
+          <p style="font-size:12px;color:var(--text-secondary)">Always on (dark mode only)</p>
+        </div>
+        <div style="width:48px;height:24px;background:var(--primary);border-radius:12px;position:relative;cursor:pointer">
+          <div style="width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="/auth/logout" class="dash-btn-secondary" style="width:100%;justify-content:center;color:var(--error);border-color:rgba(239,68,68,0.3)">
+    Sign Out
+  </a>
 </div>
-</div>
-</div>
-<a href="/auth/logout" class="block w-full text-center py-3 border border-error/30 text-error rounded-lg font-bold hover:bg-error/10 transition-all font-body-md">Sign Out</a>
-</div>
-</div>
-<%- include('partials/footer') %>
+
+<%- include('partials/dashboard-footer') %>

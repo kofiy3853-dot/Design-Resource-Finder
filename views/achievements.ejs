@@ -1,81 +1,61 @@
-<%- include('partials/header') %>
-<div class="pt-24 pb-xl">
-  <div class="max-w-7xl mx-auto px-md">
-    <!-- Header -->
-    <h1 class="font-headline-lg text-headline-lg text-on-surface mb-md">Your Achievements</h1>
-    <p class="font-body-md text-body-md text-on-surface-variant mb-lg">Track your progress and unlock badges as you analyze more designs</p>
+<%- include('partials/header-app') %>
+<%- include('partials/dashboard-layout') %>
 
-    <!-- Stats Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md mb-lg">
-      <div class="glass-card p-lg rounded-xl">
-        <div class="flex items-center justify-between mb-md">
-          <span class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-            <span class="material-symbols-outlined text-primary">trending_up</span>
-          </span>
-        </div>
-        <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">Total Analyses</p>
-        <p class="font-display-xl text-3xl text-on-surface font-bold"><%= stats.total_analyses || 0 %></p>
-      </div>
+<div class="dash-page-header">
+  <h1>Achievements</h1>
+  <p>Track your progress and unlock badges as you analyze more designs</p>
+</div>
 
-      <div class="glass-card p-lg rounded-xl">
-        <div class="flex items-center justify-between mb-md">
-          <span class="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
-            <span class="material-symbols-outlined text-secondary">local_fire_department</span>
-          </span>
-        </div>
-        <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">Current Streak</p>
-        <p class="font-display-xl text-3xl text-on-surface font-bold"><%= streak.current_streak || 0 %></p>
-        <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Best: <%= streak.longest_streak || 0 %></p>
-      </div>
-
-      <div class="glass-card p-lg rounded-xl">
-        <div class="flex items-center justify-between mb-md">
-          <span class="w-10 h-10 rounded-lg bg-tertiary/20 flex items-center justify-center">
-            <span class="material-symbols-outlined text-tertiary">bookmark</span>
-          </span>
-        </div>
-        <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">Saved Items</p>
-        <p class="font-display-xl text-3xl text-on-surface font-bold"><%= stats.total_favorites || 0 %></p>
-      </div>
-
-      <div class="glass-card p-lg rounded-xl">
-        <div class="flex items-center justify-between mb-md">
-          <span class="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-            <span class="material-symbols-outlined text-primary">stars</span>
-          </span>
-        </div>
-        <p class="font-label-sm text-label-sm text-on-surface-variant mb-xs">Avg. Confidence</p>
-        <p class="font-display-xl text-3xl text-on-surface font-bold"><%= Math.round(stats.avg_confidence_score || 0) %>%</p>
-      </div>
-    </div>
-
-    <!-- Achievements Grid -->
-    <div>
-      <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Badges Earned</h2>
-      
-      <% if (achievements && achievements.length > 0) { %>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md">
-        <% achievements.forEach(a => { %>
-        <div class="glass-card p-md rounded-xl flex items-start gap-md hover:border-primary/30 transition-all">
-          <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-primary text-2xl"><%= a.icon_name %></span>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="font-body-md text-body-md text-on-surface font-bold"><%= a.achievement_name %></p>
-            <p class="font-label-sm text-label-sm text-on-surface-variant line-clamp-2"><%= a.description %></p>
-            <p class="font-label-sm text-label-sm text-on-surface-variant/50 mt-xs">Earned <%= new Date(a.earned_at).toLocaleDateString() %></p>
-          </div>
-        </div>
-        <% }) %>
-      </div>
-      <% } else { %>
-      <div class="glass-card p-lg rounded-xl text-center">
-        <span class="material-symbols-outlined text-5xl text-on-surface-variant/30 block mb-md">emoji_events</span>
-        <p class="font-body-md text-body-md text-on-surface-variant">Start analyzing designs to earn badges!</p>
-      </div>
-      <% } %>
-    </div>
+<!-- Stats Overview -->
+<div class="dash-stats" style="margin-bottom:24px">
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon"><span class="material-symbols-outlined">trending_up</span></div>
+    <div class="dash-stat-number"><%= stats.total_analyses || 0 %></div>
+    <div class="dash-stat-label">Total Analyses</div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon" style="background:rgba(197,189,255,0.1);color:var(--secondary)"><span class="material-symbols-outlined">local_fire_department</span></div>
+    <div class="dash-stat-number"><%= streak.current_streak || 0 %></div>
+    <div class="dash-stat-label">Current Streak</div>
+    <div class="dash-stat-sub">Best: <%= streak.longest_streak || 0 %></div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon" style="background:rgba(195,199,205,0.1);color:var(--tertiary)"><span class="material-symbols-outlined">bookmark</span></div>
+    <div class="dash-stat-number"><%= stats.total_favorites || 0 %></div>
+    <div class="dash-stat-label">Saved Items</div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-icon"><span class="material-symbols-outlined">stars</span></div>
+    <div class="dash-stat-number"><%= Math.round(stats.avg_confidence_score || 0) %>%</div>
+    <div class="dash-stat-label">Avg. Confidence</div>
   </div>
 </div>
 
-<%- include('partials/footer') %>
+<!-- Achievements Grid -->
+<div class="dash-card">
+  <h3 style="font-size:16px;font-weight:600;color:var(--on-surface);margin-bottom:16px">Badges Earned</h3>
+
+  <% if (achievements && achievements.length > 0) { %>
+  <div class="history-grid">
+    <% achievements.forEach(function(a) { %>
+    <div class="resource-card" style="display:flex;align-items:flex-start;gap:12px">
+      <div style="width:48px;height:48px;border-radius:12px;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span class="material-symbols-outlined" style="color:var(--primary);font-size:24px"><%= a.icon_name %></span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <p style="font-size:14px;font-weight:600;color:var(--on-surface)"><%= a.achievement_name %></p>
+        <p style="font-size:13px;color:var(--text-secondary);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden"><%= a.description %></p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:8px">Earned <%= new Date(a.earned_at).toLocaleDateString() %></p>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div style="text-align:center;padding:40px 20px">
+    <span class="material-symbols-outlined" style="font-size:48px;color:var(--text-muted);opacity:0.3;margin-bottom:12px;display:block">emoji_events</span>
+    <p style="font-size:14px;color:var(--text-secondary)">Start analyzing designs to earn badges!</p>
+  </div>
+  <% } %>
+</div>
+
+<%- include('partials/dashboard-footer') %>

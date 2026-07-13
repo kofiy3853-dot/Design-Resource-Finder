@@ -1,33 +1,37 @@
-<%- include('partials/header') %>
-<div class="pt-24 pb-xl max-w-container-max mx-auto px-md">
-<div class="flex justify-between items-center mb-xl">
-<div>
-<h1 class="font-headline-lg text-headline-lg">Saved Items</h1>
-<p class="font-body-md text-body-md text-on-surface-variant">Your bookmarked analyses</p>
+<%- include('partials/header-app') %>
+<%- include('partials/dashboard-layout') %>
+
+<div class="dash-page-header" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px">
+  <div>
+    <h1>Saved Items</h1>
+    <p>Your bookmarked analyses</p>
+  </div>
+  <a href="/history" class="dash-btn-secondary">
+    <span class="material-symbols-outlined" style="font-size:18px">history</span> View all history
+  </a>
 </div>
-<a href="/history" class="text-primary hover:underline font-body-md">View all history</a>
-</div>
+
 <% if (items && items.length > 0) { %>
-<div class="space-y-md">
-<% items.forEach(item => { %>
-<a href="/analysis/<%= item.analysis_id %>" class="glass-card p-md rounded-xl flex items-center gap-md hover:border-primary/30 transition-all block">
-<div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-<span class="material-symbols-outlined text-primary"><%= item.status === 'completed' ? 'check_circle' : 'progress_activity' %></span>
-</div>
-<div class="flex-1 min-w-0">
-<p class="font-body-md text-body-md text-on-surface truncate"><%= item.analysis_title || 'Untitled' %></p>
-<p class="font-label-sm text-label-sm text-on-surface-variant">Saved · <%= new Date(item.created_at).toLocaleDateString() %></p>
-</div>
-<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
-</a>
-<% }) %>
+<div style="display:flex;flex-direction:column;gap:12px">
+  <% items.forEach(function(item) { %>
+  <a href="/analysis/<%= item.analysis_id %>" class="dash-card" style="display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+    <div style="width:48px;height:48px;border-radius:12px;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <span class="material-symbols-outlined" style="color:var(--primary)"><%= item.status === 'completed' ? 'check_circle' : 'progress_activity' %></span>
+    </div>
+    <div style="flex:1;min-width:0">
+      <p style="font-size:14px;font-weight:600;color:var(--on-surface);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><%= item.analysis_title || 'Untitled' %></p>
+      <p style="font-size:12px;color:var(--text-muted)">Saved · <%= new Date(item.created_at).toLocaleDateString() %></p>
+    </div>
+    <span class="material-symbols-outlined" style="color:var(--text-muted);font-size:20px">chevron_right</span>
+  </a>
+  <% }) %>
 </div>
 <% } else { %>
-<div class="glass-card p-xl rounded-xl text-center">
-<span class="material-symbols-outlined text-5xl text-on-surface-variant/30 mb-md" style="font-variation-settings: 'FILL' 1;">bookmark</span>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-md">No saved items yet</p>
-<p class="font-body-md text-body-md text-on-surface-variant">Bookmark analyses to quickly find them later.</p>
+<div class="dash-card" style="text-align:center;padding:80px 20px">
+  <span class="material-symbols-outlined" style="font-size:56px;color:var(--text-muted);opacity:0.3;margin-bottom:16px;display:block">bookmark</span>
+  <h3 style="font-size:18px;font-weight:600;color:var(--on-surface);margin-bottom:8px">No saved items yet</h3>
+  <p style="font-size:14px;color:var(--text-secondary)">Bookmark analyses to quickly find them later.</p>
 </div>
 <% } %>
-</div>
-<%- include('partials/footer') %>
+
+<%- include('partials/dashboard-footer') %>

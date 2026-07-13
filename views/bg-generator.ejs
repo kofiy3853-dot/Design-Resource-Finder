@@ -1,93 +1,84 @@
-<%- include('partials/header') %>
-<main class="pt-24 pb-xl">
-  <div class="max-w-container-max mx-auto px-md">
-    <div class="flex items-center gap-sm mb-lg">
-      <a href="/dashboard" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-xs font-body-md">
-        <span class="material-symbols-outlined">arrow_back</span> Back to Dashboard
-      </a>
-      <h1 class="font-headline-lg text-headline-lg mb-sm">AI Background Generator</h1>
-      <p class="font-body-md text-body-md text-on-surface-variant">Generate unique backgrounds with AI</p>
-    </div>
+<%- include('partials/header-app') %>
+<%- include('partials/dashboard-layout') %>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
-      <!-- Prompt Input -->
-      <div class="lg:col-span-1">
-        <div class="glass-card rounded-2xl p-lg">
-          <h2 class="font-headline-sm text-headline-sm mb-md">Generate Background</h2>
-          
-          <div class="mb-md">
-            <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Style</label>
-            <select id="bgStyle" class="w-full px-sm py-sm rounded-xl border border-white/10 bg-surface-container-high text-on-surface font-body-md">
-              <option value="abstract">Abstract</option>
-              <option value="gradient">Gradient</option>
-              <option value="mesh">Mesh Gradient</option>
-              <option value="geometric">Geometric</option>
-              <option value="fluid">Fluid/Organic</option>
-              <option value="noise">Noise/Texture</option>
-              <option value="light">Light Effects</option>
-            </select>
-          </div>
+<div class="dash-page-header">
+  <h1>AI Background Generator</h1>
+  <p>Generate unique backgrounds with AI</p>
+</div>
 
-          <div class="mb-md">
-            <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Color Theme</label>
-            <select id="bgColors" class="w-full px-sm py-sm rounded-xl border border-white/10 bg-surface-container-high text-on-surface font-body-md">
-              <option value="auto">Auto (AI chooses)</option>
-              <option value="warm">Warm</option>
-              <option value="cool">Cool</option>
-              <option value="vibrant">Vibrant</option>
-              <option value="monochrome">Monochrome</option>
-              <option value="pastel">Pastel</option>
-              <option value="dark">Dark Mode</option>
-            </select>
-          </div>
+<div class="dash-grid-2">
+  <!-- Prompt Input -->
+  <div>
+    <div class="dash-card" style="margin-bottom:16px">
+      <h3 style="font-size:16px;font-weight:600;color:var(--on-surface);margin-bottom:16px">Generate Background</h3>
 
-          <div class="mb-md">
-            <label class="font-label-sm text-label-sm text-on-surface-variant block mb-xs">Custom Prompt (optional)</label>
-            <textarea id="bgPrompt" rows="3" class="w-full px-sm py-sm rounded-xl border border-white/10 bg-surface-container-high text-on-surface font-body-md resize-none" placeholder="e.g., sunset over mountains, subtle grain texture..."></textarea>
-          </div>
-
-          <button id="generateBg" class="w-full py-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-xs">
-            <span class="material-symbols-outlined">auto_awesome</span> Generate Background
-          </button>
-        </div>
-
-        <!-- Generated Results -->
-        <div class="glass-card rounded-2xl p-lg mt-lg">
-          <h2 class="font-headline-sm text-headline-sm mb-md">Your Generated Backgrounds</h2>
-          <div id="generatedBgs" class="grid grid-cols-2 gap-sm">
-            <!-- Generated images appear here -->
-          </div>
-        </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px">Style</label>
+        <select id="bgStyle" style="width:100%;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--nav-border);background:var(--card-bg);font-size:14px;color:var(--on-surface);font-family:inherit">
+          <option value="abstract">Abstract</option>
+          <option value="gradient">Gradient</option>
+          <option value="mesh">Mesh Gradient</option>
+          <option value="geometric">Geometric</option>
+          <option value="fluid">Fluid/Organic</option>
+          <option value="noise">Noise/Texture</option>
+          <option value="light">Light Effects</option>
+        </select>
       </div>
 
-      <!-- Preview Area -->
-      <div class="lg:col-span-2">
-        <div class="glass-card rounded-2xl overflow-hidden">
-          <div class="aspect-video bg-surface-container-high flex items-center justify-center relative" id="previewArea">
-            <span class="material-symbols-outlined text-5xl text-on-surface-variant/30" style="font-variation-settings:'FILL'1;">image</span>
-            <div class="absolute top-3 right-3 flex gap-xs">
-              <button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="downloadBg" title="Download">
-                <span class="material-symbols-outlined">download</span>
-              </button>
-              <button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="regenerateBg" title="Regenerate">
-                <span class="material-symbols-outlined">refresh</span>
-              </button>
-            </div>
-          </div>
-          <div class="p-md border-t border-white/5">
-            <div class="flex items-center justify-between">
-              <p class="font-body-md text-body-md text-on-surface-variant">Preview Area</p>
-              <div class="flex gap-xs">
-                <button class="px-sm py-xs rounded-lg border border-white/10 text-on-surface-variant font-label-sm" id="copyPrompt">Copy Prompt</button>
-                <button class="px-sm py-xs rounded-lg bg-primary text-on-primary font-label-sm" id="saveBg">Save to Favorites</button>
-              </div>
-            </div>
-          </div>
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px">Color Theme</label>
+        <select id="bgColors" style="width:100%;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--nav-border);background:var(--card-bg);font-size:14px;color:var(--on-surface);font-family:inherit">
+          <option value="auto">Auto (AI chooses)</option>
+          <option value="warm">Warm</option>
+          <option value="cool">Cool</option>
+          <option value="vibrant">Vibrant</option>
+          <option value="monochrome">Monochrome</option>
+          <option value="pastel">Pastel</option>
+          <option value="dark">Dark Mode</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px">Custom Prompt (optional)</label>
+        <textarea id="bgPrompt" rows="3" style="width:100%;padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--nav-border);background:var(--card-bg);font-size:14px;color:var(--on-surface);font-family:inherit;resize:none" placeholder="e.g., sunset over mountains, subtle grain texture..."></textarea>
+      </div>
+
+      <button id="generateBg" class="dash-btn-primary dash-ripple">
+        <span class="material-symbols-outlined">auto_awesome</span> Generate Background
+      </button>
+    </div>
+
+    <!-- Generated Results -->
+    <div class="dash-card">
+      <h3 style="font-size:16px;font-weight:600;color:var(--on-surface);margin-bottom:16px">Your Generated Backgrounds</h3>
+      <div id="generatedBgs" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
+    </div>
+  </div>
+
+  <!-- Preview Area -->
+  <div>
+    <div class="dash-card" style="overflow:hidden">
+      <div id="previewArea" style="aspect-ratio:16/9;background:var(--surface-container-high);display:flex;align-items:center;justify-content:center;position:relative;border-radius:12px;overflow:hidden">
+        <span class="material-symbols-outlined" style="font-size:56px;color:var(--text-muted);opacity:0.3">image</span>
+        <div style="position:absolute;top:12px;right:12px;display:flex;gap:8px">
+          <button id="downloadBg" style="width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer" title="Download">
+            <span class="material-symbols-outlined" style="font-size:18px">download</span>
+          </button>
+          <button id="regenerateBg" style="width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer" title="Regenerate">
+            <span class="material-symbols-outlined" style="font-size:18px">refresh</span>
+          </button>
+        </div>
+      </div>
+      <div style="padding:16px;border-top:1px solid var(--nav-border);display:flex;align-items:center;justify-content:space-between">
+        <p style="font-size:13px;color:var(--text-secondary)">Preview Area</p>
+        <div style="display:flex;gap:8px">
+          <button id="copyPrompt" class="dash-btn-secondary" style="padding:6px 12px">Copy Prompt</button>
+          <button id="saveBg" class="dash-btn-primary" style="width:auto;padding:6px 12px">Save to Favorites</button>
         </div>
       </div>
     </div>
   </div>
-</main>
+</div>
 
 <script>
 (function() {
@@ -108,7 +99,6 @@
   let currentImageUrl = '';
   let currentBgId = null;
 
-  // Style-specific prompt templates
   const styleTemplates = {
     abstract: 'abstract art, fluid shapes, organic forms, modern aesthetic',
     gradient: 'smooth color gradients, seamless transitions, elegant color flow',
@@ -129,29 +119,17 @@
   };
 
   function buildPrompt() {
-    const style = styleSelect.value;
-    const color = colorSelect.value;
-    const custom = promptInput.value.trim();
-    
-    let prompt = styleTemplates[style] || styleTemplates.abstract;
-    
-    if (color !== 'auto') {
-      prompt += ', ' + colorTemplates[color];
-    }
-    
-    if (custom) {
-      prompt += ', ' + custom;
-    }
-    
+    let prompt = styleTemplates[styleSelect.value] || styleTemplates.abstract;
+    if (colorSelect.value !== 'auto') prompt += ', ' + colorTemplates[colorSelect.value];
+    if (promptInput.value.trim()) prompt += ', ' + promptInput.value.trim();
     prompt += ', high quality, 4k, professional design';
-    
     return prompt;
   }
 
   function showLoading() {
     generateBtn.disabled = true;
-    generateBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Generating...';
-    previewArea.innerHTML = '<div class="flex flex-col items-center justify-center h-full"><div class="w-12 h-12 border-3 border-primary border-t-transparent rounded-full animate-spin mb-4"></div><p class="font-body-md text-on-surface-variant">Generating background...</p></div>';
+    generateBtn.innerHTML = '<span class="material-symbols-outlined" style="animation:spin 1s linear infinite">progress_activity</span> Generating...';
+    previewArea.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%"><div style="width:48px;height:48px;border:3px solid var(--primary);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px"></div><p style="font-size:14px;color:var(--text-secondary)">Generating background...</p></div>';
   }
 
   function hideLoading() {
@@ -162,71 +140,38 @@
   function setPreviewImage(url, prompt) {
     currentImageUrl = url;
     currentPrompt = prompt;
-    previewArea.innerHTML = `
-      <img src="${url}" alt="Generated background" class="w-full h-full object-cover">
-      <div class="absolute top-3 right-3 flex gap-xs">
-        <button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="downloadBg" title="Download">
-          <span class="material-symbols-outlined">download</span>
-        </button>
-        <button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" id="regenerateBg" title="Regenerate">
-          <span class="material-symbols-outlined">refresh</span>
-        </button>
-      </div>
-    `;
-    
-    // Re-attach event listeners
+    previewArea.innerHTML = '<img src="' + url + '" alt="Generated background" style="width:100%;height:100%;object-fit:cover"><div style="position:absolute;top:12px;right:12px;display:flex;gap:8px"><button id="downloadBg" style="width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer" title="Download"><span class="material-symbols-outlined" style="font-size:18px">download</span></button><button id="regenerateBg" style="width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.5);color:#fff;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer" title="Regenerate"><span class="material-symbols-outlined" style="font-size:18px">refresh</span></button></div>';
     document.getElementById('downloadBg').addEventListener('click', downloadImage);
     document.getElementById('regenerateBg').addEventListener('click', generateBackground);
   }
 
   function addToGallery(url, prompt) {
     const item = document.createElement('div');
-    item.className = 'relative aspect-square rounded-xl overflow-hidden cursor-pointer hover:scale-105 transition-transform';
-    item.innerHTML = `
-      <img src="${url}" alt="Generated" class="w-full h-full object-cover">
-      <div class="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-        <span class="material-symbols-outlined text-white text-2xl">zoom_in</span>
-      </div>
-    `;
-    item.addEventListener('click', () => setPreviewImage(url, prompt));
+    item.style.cssText = 'position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;cursor:pointer;transition:transform 0.2s';
+    item.onmouseover = function() { this.style.transform = 'scale(1.05)'; };
+    item.onmouseout = function() { this.style.transform = 'scale(1)'; };
+    item.innerHTML = '<img src="' + url + '" alt="Generated" style="width:100%;height:100%;object-fit:cover">';
+    item.addEventListener('click', function() { setPreviewImage(url, prompt); });
     generatedBgs.insertBefore(item, generatedBgs.firstChild);
   }
 
   async function generateBackground() {
     const prompt = buildPrompt();
     showLoading();
-
     try {
       const response = await fetch('/api/bg/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          style: styleSelect.value,
-          color_theme: colorSelect.value,
-          custom_prompt: promptInput.value.trim(),
-          prompt: prompt
-        })
+        body: JSON.stringify({ style: styleSelect.value, color_theme: colorSelect.value, custom_prompt: promptInput.value.trim(), prompt: prompt })
       });
-
       const data = await response.json();
-      
       if (!response.ok) throw new Error(data.error || 'Generation failed');
-
       currentBgId = data.background.id;
       setPreviewImage(data.background.url, prompt);
       addToGallery(data.background.url, prompt);
-      showToast('Background generated successfully!');
-
     } catch (err) {
       console.error(err);
-      showToast(err.message, 'error');
-      previewArea.innerHTML = `
-        <div class="flex flex-col items-center justify-center h-full text-center p-4">
-          <span class="material-symbols-outlined text-5xl text-error mb-2">error_outline</span>
-          <p class="font-body-md text-on-surface-variant">Failed to generate</p>
-          <p class="font-label-sm text-error mt-1">${err.message}</p>
-        </div>
-      `;
+      previewArea.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:20px"><span class="material-symbols-outlined" style="font-size:48px;color:var(--error);margin-bottom:8px">error_outline</span><p style="font-size:14px;color:var(--text-secondary)">Failed to generate</p><p style="font-size:12px;color:var(--error);margin-top:4px">' + err.message + '</p></div>';
     } finally {
       hideLoading();
     }
@@ -234,72 +179,33 @@
 
   function downloadImage() {
     if (!currentImageUrl) return;
-    const a = document.createElement('a');
+    var a = document.createElement('a');
     a.href = currentImageUrl;
-    a.download = `bg-${Date.now()}.png`;
+    a.download = 'bg-' + Date.now() + '.png';
     a.click();
-    showToast('Download started');
   }
 
   function copyPrompt() {
     if (!currentPrompt) return;
     navigator.clipboard.writeText(currentPrompt);
-    showToast('Prompt copied to clipboard');
   }
 
   async function saveBackground() {
     if (!currentBgId) return;
-    
     try {
-      const response = await fetch('/api/bg/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bg_id: currentBgId })
-      });
-      
-      if (response.ok) {
-        showToast('Saved to favorites!');
-      } else {
-        throw new Error('Failed to save');
-      }
-    } catch (err) {
-      showToast(err.message, 'error');
-    }
+      await fetch('/api/bg/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ bg_id: currentBgId }) });
+    } catch (err) { console.error(err); }
   }
 
-  function showToast(message, type) {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    const icon = type === 'error' ? 'error' : 'check_circle';
-    const color = type === 'error' ? '#EF4444' : '#10B981';
-    toast.innerHTML = '<span class="toast-icon material-symbols-outlined" style="color:' + color + '">' + icon + '</span>' + message;
-    container.appendChild(toast);
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(100px)';
-      toast.style.transition = 'all 0.3s ease';
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
-  }
-
-  // Event listeners
   generateBtn.addEventListener('click', generateBackground);
   downloadBtn.addEventListener('click', downloadImage);
   regenerateBtn.addEventListener('click', generateBackground);
   copyBtn.addEventListener('click', copyPrompt);
   saveBtn.addEventListener('click', saveBackground);
-
-  // Regenerate with same settings on Enter in prompt
-  promptInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      generateBackground();
-    }
-  });
-
-  console.log('BG Generator initialized');
+  promptInput.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); generateBackground(); } });
 })();
 </script>
-<%- include('partials/footer') %>
+
+<style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
+
+<%- include('partials/dashboard-footer') %>
